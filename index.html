@@ -1,129 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chemix Virtual Lab — Enhanced</title>
-  <meta name="description" content="Chemix Virtual Lab — an original browser-based chemistry simulation workspace with rich animations." />
-  <link rel="stylesheet" href="styles.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chemix Lab — Reimagined</title>
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+    <div class="app">
 
-  <div class="app-shell">
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-mark">⚗</div>
-        <div>
-          <div class="brand-title">CHEMIX</div>
-          <div class="brand-subtitle">Virtual Lab</div>
+        <!-- Top Bar -->
+        <header class="topbar">
+            <div class="logo">
+                <div class="logo-icon">⚗</div>
+                <span>Chemix</span><span style="color:var(--text-muted);font-weight:400;">Lab</span>
+            </div>
+            <div class="exp-title">
+                <input id="expTitle" value="Untitled Experiment" placeholder="Experiment title" />
+            </div>
+            <div class="top-actions">
+                <button id="newBtn">➕ New</button>
+                <button id="saveBtn">💾 Save</button>
+                <button id="resetBtn">↻ Reset</button>
+                <button id="clearBtn">🗑 Clear</button>
+                <button id="helpBtn" class="primary">❓ Help</button>
+            </div>
+        </header>
+
+        <!-- Workspace -->
+        <div class="workspace">
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="search">
+                    <input id="searchBox" placeholder="Search items..." />
+                </div>
+                <div class="category-tabs" id="categoryTabs">
+                    <button class="active" data-cat="apparatus">Vessels</button>
+                    <button data-cat="tools">Tools</button>
+                    <button data-cat="solids">Solids</button>
+                    <button data-cat="liquids">Liquids</button>
+                    <button data-cat="indicators">Indicators</button>
+                </div>
+                <div class="palette-grid" id="paletteGrid"></div>
+                <div class="sidebar-footer">⚡ Drag & drop onto the bench</div>
+            </aside>
+
+            <!-- Stage -->
+            <section class="stage-wrap">
+                <div class="stage-toolbar">
+                    <div class="stage-tools">
+                        <button id="zoomOutBtn">−</button>
+                        <span class="zoom-val" id="zoomVal">100%</span>
+                        <button id="zoomInBtn">＋</button>
+                        <button id="centerBtn">◎ Center</button>
+                    </div>
+                    <div class="stage-status">
+                        <span class="dot"></span>
+                        <span id="statusText">Ready</span>
+                    </div>
+                </div>
+                <div id="stage" class="stage" tabindex="0">
+                    <div class="grid-bg"></div>
+                    <div class="light"></div>
+                    <div class="hint" id="hint">
+                        <strong>🧪 Build your experiment</strong>
+                        <span>Drag items from the left panel onto the bench</span>
+                    </div>
+                    <div id="objectLayer" class="object-layer"></div>
+                </div>
+
+                <!-- Bottom Panel -->
+                <div class="bottom-panel">
+                    <div class="step-chips">
+                        <button class="active" data-step="1">1 Setup</button>
+                        <button data-step="2">2 Reagents</button>
+                        <button data-step="3">3 Observe</button>
+                        <button data-step="4">4 Record</button>
+                    </div>
+                    <div class="observation-box">
+                        <div class="label">Observation</div>
+                        <div class="text" id="observationText">No reaction started.</div>
+                    </div>
+                    <button id="runBtn" class="run-btn">▶ Run Simulation</button>
+                </div>
+            </section>
+
+            <!-- Inspector -->
+            <aside class="inspector" id="inspector">
+                <div class="inspector-header">
+                    <div>
+                        <h3 id="inspectorTitle">Nothing selected</h3>
+                        <div class="sub" id="inspectorSub">Select an object to edit</div>
+                    </div>
+                    <button id="closeInspector" style="font-size:20px;color:var(--text-muted);">×</button>
+                </div>
+                <div class="inspector-body" id="inspectorBody">
+                    <div class="empty-inspector">
+                        <div class="icon">🔬</div>
+                        <p>Select an object on the bench to see its properties.</p>
+                    </div>
+                </div>
+            </aside>
         </div>
-      </div>
-
-      <div class="experiment-name">
-        <input id="experimentTitle" value="Untitled Experiment" aria-label="Experiment title" />
-        <button id="renameBtn" class="icon-btn" title="Rename experiment">✎</button>
-      </div>
-
-      <div class="top-actions">
-        <button id="settingsBtn" class="toolbar-btn">⚙ <span>Settings</span></button>
-        <button id="resetBtn" class="toolbar-btn">↻ <span>Reset</span></button>
-        <button id="clearBtn" class="toolbar-btn">⌫ <span>Clear</span></button>
-        <button id="saveBtn" class="toolbar-btn">▣ <span>Save</span></button>
-        <button id="newBtn" class="primary-btn">＋ New experiment</button>
-      </div>
-    </header>
-
-    <main class="workspace">
-      <aside class="sidebar">
-        <div class="search-row">
-          <input id="searchBox" placeholder="Search equipment..." />
-          <button id="categoryBtn" class="icon-btn" title="Categories">☷</button>
-        </div>
-
-        <div class="category-tabs">
-          <button class="cat-tab active" data-category="apparatus">Reaction vessels</button>
-          <button class="cat-tab" data-category="tools">Assistive tools</button>
-          <button class="cat-tab" data-category="solids">Solid chemicals</button>
-          <button class="cat-tab" data-category="liquids">Liquid chemicals</button>
-          <button class="cat-tab" data-category="indicators">Indicators</button>
-        </div>
-
-        <div id="palette" class="palette"></div>
-
-        <div class="sidebar-footer">
-          <button id="helpBtn" class="ghost-btn">❔ Lab guide</button>
-          <div class="safety-note">⚠ Simulated environment for learning.</div>
-        </div>
-      </aside>
-
-      <section class="stage-wrap">
-        <div class="stage-toolbar">
-          <div class="stage-tools">
-            <button id="selectModeBtn" class="stage-btn active">↖ Select</button>
-            <button id="panBtn" class="stage-btn">✋ Pan</button>
-            <button id="zoomOutBtn" class="stage-btn">−</button>
-            <span id="zoomValue">100%</span>
-            <button id="zoomInBtn" class="stage-btn">＋</button>
-            <button id="centerBtn" class="stage-btn">◎ Center</button>
-          </div>
-          <div class="stage-status"><span class="status-dot"></span><span id="statusText">Ready</span></div>
-        </div>
-
-        <div id="stage" class="stage" tabindex="0">
-          <div class="desk-grid"></div>
-          <div class="bench-light"></div>
-          <div id="hint" class="stage-hint">
-            <strong>Build your experiment</strong>
-            <span>Drag apparatus or chemicals from the left panel onto the bench.</span>
-          </div>
-          <div id="objectLayer" class="object-layer"></div>
-          <div id="measurementOverlay" class="measurement-overlay"></div>
-        </div>
-
-        <div class="bottom-panel">
-          <div class="step-strip">
-            <button class="step-chip active" data-step="1">1 Setup</button>
-            <button class="step-chip" data-step="2">2 Add reagent</button>
-            <button class="step-chip" data-step="3">3 Observe</button>
-            <button class="step-chip" data-step="4">4 Record</button>
-          </div>
-          <div class="observation">
-            <div class="observation-title">Observation</div>
-            <div id="observationText">No reaction has been started.</div>
-          </div>
-          <button id="runBtn" class="run-btn">▶ Run simulation</button>
-        </div>
-      </section>
-
-      <aside class="inspector" id="inspector">
-        <div class="inspector-header">
-          <div>
-            <div class="eyebrow">OBJECT</div>
-            <h2 id="inspectorTitle">Nothing selected</h2>
-          </div>
-          <button id="closeInspectorBtn" class="icon-btn">×</button>
-        </div>
-
-        <div id="inspectorBody" class="inspector-body">
-          <div class="empty-inspector">
-            <div class="empty-icon">⚗</div>
-            <p>Select an object on the bench to edit its properties.</p>
-          </div>
-        </div>
-      </aside>
-    </main>
-  </div>
-
-  <div id="modal" class="modal hidden">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 id="modalTitle">Lab guide</h3>
-        <button id="modalClose" class="icon-btn">×</button>
-      </div>
-      <div id="modalContent" class="modal-content"></div>
     </div>
-  </div>
 
-  <script src="app.js"></script>
+    <!-- Modal -->
+    <div id="modal" class="modal hidden">
+        <div class="modal-card">
+            <h2 id="modalTitle">Info</h2>
+            <div id="modalContent"><p>Content</p></div>
+            <button class="btn-close" id="modalClose">Close</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
 </body>
 </html>
