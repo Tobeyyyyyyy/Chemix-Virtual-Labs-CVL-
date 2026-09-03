@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh_CN">
+  <head>
+    <base href="/" />
+
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <!-- <meta name="description" content="false" />
+    <meta
+      name="keywords"
+      content=""
+    /> -->
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"
+      viewport-fit="cover"
+    />
+
+    <meta name="x5-fullscreen" content="true" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="format-detection" content="telephone=no, email=no" />
+
+    <meta name="packver" content="project/huaxue_v3.18.1-en-2" />
+    <meta name="IS_SDK" content="false" />
+    <!-- <title id='nbTitle'>
+      false
+    </title> -->
+    <!-- <link rel="stylesheet" href="assets/nbQuestion/css/main.css"> -->
+    <!-- <link rel="icon" href="/chem.ico" type="image/x-icon" /> -->
+    <script>
+      window.global = window.global || window;
+      window.__appStartTime = new Date().getTime();
+    </script>
+    <!-- docker环境变量配置 -->
+    <script src="js/webcomponents-bundle.js"></script>
+    <script src="js/snap.svg-min.js"></script>
+    <script src="assets/nb-config.js?v=project/huaxue_v3.18.1-en-2"></script>
+    <script src="js/lodash-4.17.20.min.js"></script>
+    <script src="js/jquery-3.2.1.min.js"></script>
+
+    <script src="js/sensorsdata.min-1.22.7.js"></script>
+    <script src="https://nobook-oss-publish-cdn.nobook.com/open-interface/official-sensors.git/cdb9c63fc64924d455734d88b36d5407/other-login.min.js?v=0.0.6"></script>
+
+    <script src="js/keyboard.min.js"></script>
+
+    <script src="js/gt.js"></script>
+    <script src="assets/libs/tinymce/tinymce.min.js"></script>
+    <script src="assets/nb-bootstrap-common-css.js"></script>
+    <script src="js/sw.js"></script>
+
+    <script src="assets/nb-utils.min.js?v=project/huaxue_v3.18.1-en-2"></script>
+    <script src="assets/postmate.min.js?v=project/huaxue_v3.18.1-en-2"></script>
+
+    <link rel="manifest" href="manifest.json" />
+
+    <!-- <link rel="stylesheet" href="//cdn.quilljs.com/1.3.6/quill.bubble.css"> -->
+    <!-- <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet"> -->
+    <!-- <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script> -->
+
+    <!-- 微信分享 -->
+    <!-- <script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script> -->
+    <link rel="shortcut icon" type="image/x-icon" href="chem.ico" />
+    <link rel="stylesheet" href="/umi.b7bf0042.css" />
+    <script>
+      window.routerBase = "/";
+    </script>
+    <script>
+      //! umi version: 3.5.43
+    </script>
+  </head>
+
+  <body>
+    <div
+      style="display: none"
+      class="header_header__KeG_k header_headerBg__t4J1_"
+    >
+      <div class="header_headerContent__0j0dZ">
+        <h1>
+          <a href="/">
+            <img
+              loading="lazy"
+              style="display: none"
+              src="_next/static/images/logo-d1843a5af603136e1339959e567c61ec.png"
+              alt="nobook虚拟实验"
+              height="100%"
+              width="100%"
+            />
+          </a>
+        </h1>
+      </div>
+      <div class="header_pcHeader__cu0t3">
+        <div class="pcHeader_header__mx8Uo">
+          <div>
+            <ul class="pcHeader_nav___F_hK">
+              <li class="">
+                <span>产品</span
+                ><span class="pcHeader_iconWrap__o0qub"
+                  ><svg
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M3.098 6.57 8 11.47l4.902-4.902-.471-.471L8 10.528l-4.431-4.43-.471.471Z"
+                      fill="currentColor"
+                    ></path></svg
+                ></span>
+                <div class="pcHeader_navLine__QRoKr"></div>
+              </li>
+              <li class="">
+                <span>下载</span
+                ><span class="pcHeader_iconWrap__o0qub"
+                  ><svg
+                    width="1em"
+                    height="1em"
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M3.098 6.57 8 11.47l4.902-4.902-.471-.471L8 10.528l-4.431-4.43-.471.471Z"
+                      fill="currentColor"
+                    ></path></svg
+                ></span>
+                <div class="pcHeader_navLine__QRoKr"></div>
+              </li>
+              <li class="">
+                <a href="https://www.nobook.com/price.html">价格中心</a
+                ><span class="pcHeader_priceHotTxt__K5zBT">首月VIP ¥9.9</span>
+                <div class="pcHeader_navLine__QRoKr"></div>
+              </li>
+              <li>
+                <span class="pcHeader_headerFont___3rR5">手机端体验</span>
+                <div class="pcHeader_miniWrap__J8gsH">
+                  <div class="pcHeader_miniImg__Y6AX0">
+                    <img
+                      loading="lazy"
+                      style="display: none"
+                      src="_next/static/images/mini-code-cb9af42dfa70deb4e8eab2a617e626fe.jpeg"
+                      alt="手机端体验"
+                      height="auto"
+                      width="auto"
+                    />
+                  </div>
+                  <div class="pcHeader_miniImgTxt__0MyoQ">微信扫一扫</div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="pcHeader_navAbs__ICa1t pcHeader_displayNone__OYHPA">
+          <div
+            class="headerProduct_prodWrap__lxMiN pcHeader_displayNone__OYHPA"
+          >
+            <div class="headerProduct_headerTest___oJo1">
+              <div class="headerProduct_title__6mGo_">虚拟实验</div>
+              <ul>
+                <li>
+                  <a href="https://wl.nobook.com/index.html/console/templates">
+                    <img
+                      loading="lazy"
+                      style="display: none"
+                      src="_next/static/images/phy-f42afd32ed50413c96e37302ba441402.png"
+                      height="auto"
+                      width="auto"
+                    />
+                    <span class="headerProduct_prodName__qLAh1"
+                      >NB物理实验</span
+                    >
+                  </a>
+                </li>
+                <li>
+                  <a href="https://hx.nobook.com/index.html/console/templates">
+                    <img
+                      loading="lazy"
+                      style="display: none"
+                      src="_next/static/images/chem-bb7b6e48b641af407cc2b4a3ab719906.png"
+                      height="auto"
+                      width="auto"
+                    />
+                    <span class="headerProduct_prodName__qLAh1"
+                      >NB化学实验</span
+                    >
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://czsw.nobook.com/index.html/console/templates"
+                  >
+                    <img
+                      loading="lazy"
+                      style="display: none"
+                      src="_next/static/images/bio-cz-9f8fb97e1df9179e7f3d1ea6a61ab970.png"
+                      height="auto"
+                      width="auto"
+                    />
+                    <span class="headerProduct_prodName__qLAh1"
+                      >NB生物实验 | 初中</span
+                    >
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://gzsw.nobook.com/index.html/console/templates"
+                  >
+                    <img
+                      loading="lazy"
+                      style="display: none"
+                      src="_next/static/images/bio-gz-35f35b18314679df700ca912b2089cb1.png"
+                      height="auto"
+                      width="auto"
+                    />
+                    <span class="headerProduct_prodName__qLAh1"
+                      >NB生物实验 | 高中</span
+                    >
+                  </a>
+                </li>
+                <li>
+                  <a href="https://science.nobook.com//console/resources-list">
+                    <img
+                      loading="lazy"
+                      style="display: none"
+                      src="_next/static/images/sci-f4bfc9eb7e5cdd49368768ad2f06567e.png"
+                      height="auto"
+                      width="auto"
+                    />
+                    <span class="headerProduct_prodName__qLAh1"
+                      >NB小学科学</span
+                    >
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div class="headerProduct_headerTest___oJo1">
+              <div class="headerProduct_title__6mGo_">虚拟实验测评</div>
+              <ul>
+                <li>
+                  <a href="https://www.nobook.com/web-exam.html">
+                    <img
+                      loading="lazy"
+                      style="display: none"
+                      src="_next/static/images/phy-icon-dbd41e6f45a130cc259350b22cb36101.png"
+                      height="auto"
+                      width="auto"
+                    />
+                    <span class="headerProduct_prodName__qLAh1"
+                      >NB物理实验测评</span
+                    >
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.nobook.com/web-exam.html">
+                    <img
+                      loading="lazy"
+                      style="display: none"
+                      src="_next/static/images/chem-icon-264b81e06abb78db2b3cbf1d11d82ddd.png"
+                      height="auto"
+                      width="auto"
+                    />
+                    <span class="headerProduct_prodName__qLAh1"
+                      >NB化学实验测评</span
+                    >
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div
+            class="headerDownload_headerDown__PCfv_ pcHeader_displayNone__OYHPA"
+          >
+            <div class="headerDownload_title___V_kO">
+              <img
+                loading="lazy"
+                style="display: none"
+                src="_next/static/images/windows-1569cd934d0b7df1bc658bc1ea4864ef.png"
+                alt="Windows版下载"
+                height="auto"
+                width="auto"
+              />
+              <span>Windows版下载</span>
+            </div>
+            <ul class="headerDownload_headerDownList__xEL0C">
+              <li>
+                <div class="headerDownload_downIcon__A6jFy">
+                  <img
+                    loading="lazy"
+                    style="display: none"
+                    src="_next/static/images/phy-f42afd32ed50413c96e37302ba441402.png"
+                    alt="NB物理实验"
+                    height="auto"
+                    width="auto"
+                  />
+                  <span>NB物理实验</span>
+                </div>
+                <div class="headerDownload_downMask__Rz_7M">
+                  <a
+                    href="https://d2.nobook.com/software/v6_PHYSICS/PHYSICS-v6.8.0.exe"
+                  >
+                    <img
+                      loading="lazy"
+                      style="display: none"
+                      src="_next/static/images/down-b5b51808ca36134d1dc51f4d1240bf11.png"
+                      alt="NB物理实验"
+                      height="auto"
+                      width="auto"
+                    />
+                    <span>点击下载</span>
+                  </a>
+                </div>
+              </li>
+              <li>
+                <div class="headerDownload_downIcon__A6jFy">
+                  <img
+                    loading="lazy"
+                    style="display: none"
+                    src="_next/static/images/chem-bb7b6e48b641af407cc2b4a3ab719906.png"
+                    alt="NB化学实验"
+                    height="auto"
+                    width="auto"
+                  />
+                  <span>NB化学实验</span>
+                </div>
+                <div class="headerDownload_downMask__Rz_7M">
+                  <a
+                    href="https://d2.nobook.com/software/v6_CHEMICAL/CHEMICAL-v3.7.0.exe"
+                  >
+                    <img
+                      loading="lazy"
+                      style="display: none"
+                      src="_next/static/images/down-b5b51808ca36134d1dc51f4d1240bf11.png"
+                      alt="NB化学实验"
+                      height="auto"
+                      width="auto"
+                    />
+                    <span>点击下载</span>
+                  </a>
+                </div>
+              </li>
+              <li>
+                <div class="headerDownload_downIcon__A6jFy">
+                  <img
+                    loading="lazy"
+                    style="display: none"
+                    src="_next/static/images/bio-cz-9f8fb97e1df9179e7f3d1ea6a61ab970.png"
+                    alt="NB生物实验 ｜ 初中"
+                    height="auto"
+                    width="auto"
+                  />
+                  <span>NB生物实验 ｜ 初中</span>
+                </div>
+                <div class="headerDownload_downMask__Rz_7M">
+                  <a
+                    href="https://d2.nobook.com/software/v6_BIOLOGY_CZ_V2/BIOLOGY_CZ_V2-v3.3.9.exe"
+                  >
+                    <img
+                      loading="lazy"
+                      style="display: none"
+                      src="_next/static/images/down-b5b51808ca36134d1dc51f4d1240bf11.png"
+                      alt="NB生物实验 ｜ 初中"
+                      height="auto"
+                      width="auto"
+                    />
+                    <span>点击下载</span>
+                  </a>
+                </div>
+              </li>
+              <li>
+                <div class="headerDownload_downIcon__A6jFy">
+                  <img
+                    loading="lazy"
+                    style="display: none"
+                    src="_next/static/images/bio-gz-35f35b18314679df700ca912b2089cb1.png"
+                    alt="NB生物实验 ｜ 高中"
+                    height="auto"
+                    width="auto"
+                  />
+                  <span>NB生物实验 ｜ 高中</span>
+                </div>
+                <div class="headerDownload_downMask__Rz_7M">
+                  <a
+                    href="https://d2.nobook.com/software/v6_BIOLOGY_GZ_V2/BIOLOGY_GZ_V2-v3.3.9.exe"
+                  >
+                    <img
+                      loading="lazy"
+                      style="display: none"
+                      src="_next/static/images/down-b5b51808ca36134d1dc51f4d1240bf11.png"
+                      alt="NB生物实验 ｜ 高中"
+                      height="auto"
+                      width="auto"
+                    />
+                    <span>点击下载</span>
+                  </a>
+                </div>
+              </li>
+              <li>
+                <div class="headerDownload_downIcon__A6jFy">
+                  <img
+                    loading="lazy"
+                    style="display: none"
+                    src="_next/static/images/sci-f4bfc9eb7e5cdd49368768ad2f06567e.png"
+                    alt="NB小学科学"
+                    height="auto"
+                    width="auto"
+                  />
+                  <span>NB小学科学</span>
+                </div>
+                <div class="headerDownload_downMask__Rz_7M">
+                  <a
+                    href="https://d2.nobook.com/software/NB_SCIENCE/NB_SCIENCE-v3.1.5.exe"
+                  >
+                    <img
+                      loading="lazy"
+                      style="display: none"
+                      src="_next/static/images/down-b5b51808ca36134d1dc51f4d1240bf11.png"
+                      alt="NB小学科学"
+                      height="auto"
+                      width="auto"
+                    />
+                    <span>点击下载</span>
+                  </a>
+                </div>
+              </li>
+            </ul>
+            <div class="headerDownload_title___V_kO">
+              <img
+                loading="lazy"
+                style="display: none"
+                src="_next/static/images/mac-662516fe38df9ec9dc344bc2b4f13d38.png"
+                alt="Windows版下载"
+                height="auto"
+                width="auto"
+              />
+              <span>Mac版下载</span>
+            </div>
+            <ul class="headerDownload_headerDownList__xEL0C">
+              <li>
+                <div class="headerDownload_downIcon__A6jFy">
+                  <img
+                    loading="lazy"
+                    style="display: none"
+                    src="_next/static/images/phy-f42afd32ed50413c96e37302ba441402.png"
+                    alt="NB物理实验"
+                    height="auto"
+                    width="auto"
+                  />
+                  <span>NB物理实验</span>
+                </div>
+                <div class="headerDownload_downMask__Rz_7M">
+                  <a
+                    href="https://d2.nobook.com/software-mac/PHYSICS/PHYSICS-v6.3.0.dmg"
+                  >
+                    <img
+                      loading="lazy"
+                      style="display: none"
+                      src="_next/static/images/down-b5b51808ca36134d1dc51f4d1240bf11.png"
+                      alt="NB物理实验"
+                      height="auto"
+                      width="auto"
+                    />
+                    <span>点击下载</span>
+                  </a>
+                </div>
+              </li>
+              <li>
+                <div class="headerDownload_downIcon__A6jFy">
+                  <img
+                    loading="lazy"
+                    style="display: none"
+                    src="_next/static/images/chem-bb7b6e48b641af407cc2b4a3ab719906.png"
+                    alt="NB化学实验"
+                    height="auto"
+                    width="auto"
+                  />
+                  <span>NB化学实验</span>
+                </div>
+                <div class="headerDownload_downMask__Rz_7M">
+                  <a
+                    href="https://d2.nobook.com/software-mac/CHEMICAL/CHEMICAL-v3.4.0.dmg"
+                  >
+                    <img
+                      loading="lazy"
+                      style="display: none"
+                      src="_next/static/images/down-b5b51808ca36134d1dc51f4d1240bf11.png"
+                      alt="NB化学实验"
+                      height="auto"
+                      width="auto"
+                    />
+                    <span>点击下载</span>
+                  </a>
+                </div>
+              </li>
+              <li>
+                <div class="headerDownload_downIcon__A6jFy">
+                  <img
+                    loading="lazy"
+                    style="display: none"
+                    src="_next/static/images/bio-cz-9f8fb97e1df9179e7f3d1ea6a61ab970.png"
+                    alt="NB生物实验 ｜ 初中"
+                    height="auto"
+                    width="auto"
+                  />
+                  <span>NB生物实验 ｜ 初中</span>
+                </div>
+                <div class="headerDownload_downMask__Rz_7M">
+                  <a
+                    href="https://d2.nobook.com/software-mac/BIOLOGY_CZ_V2/BIOLOGY_CZ_V2-v3.2.1.dmg"
+                  >
+                    <img
+                      loading="lazy"
+                      style="display: none"
+                      src="_next/static/images/down-b5b51808ca36134d1dc51f4d1240bf11.png"
+                      alt="NB生物实验 ｜ 初中"
+                      height="auto"
+                      width="auto"
+                    />
+                    <span>点击下载</span>
+                  </a>
+                </div>
+              </li>
+              <li>
+                <div class="headerDownload_downIcon__A6jFy">
+                  <img
+                    loading="lazy"
+                    style="display: none"
+                    src="_next/static/images/bio-gz-35f35b18314679df700ca912b2089cb1.png"
+                    alt="NB生物实验 ｜ 高中"
+                    height="auto"
+                    width="auto"
+                  />
+                  <span>NB生物实验 ｜ 高中</span>
+                </div>
+                <div class="headerDownload_downMask__Rz_7M">
+                  <a
+                    href="https://d2.nobook.com/software-mac/BIOLOGY_GZ_V2/BIOLOGY_GZ_V2-v3.2.1.dmg"
+                  >
+                    <img
+                      loading="lazy"
+                      style="display: none"
+                      src="_next/static/images/down-b5b51808ca36134d1dc51f4d1240bf11.png"
+                      alt="NB生物实验 ｜ 高中"
+                      height="auto"
+                      width="auto"
+                    />
+                    <span>点击下载</span>
+                  </a>
+                </div>
+              </li>
+              <li>
+                <div class="headerDownload_downIcon__A6jFy">
+                  <img
+                    loading="lazy"
+                    style="display: none"
+                    src="_next/static/images/sci-f4bfc9eb7e5cdd49368768ad2f06567e.png"
+                    alt="NB小学科学"
+                    height="auto"
+                    width="auto"
+                  />
+                  <span>NB小学科学</span>
+                </div>
+                <div class="headerDownload_downMask__Rz_7M">
+                  <a
+                    href="https://d2.nobook.com/software-mac/NB_SCIENCE/NB_SCIENCE-v3.0.5.dmg"
+                  >
+                    <img
+                      loading="lazy"
+                      style="display: none"
+                      src="_next/static/images/down-b5b51808ca36134d1dc51f4d1240bf11.png"
+                      alt="NB小学科学"
+                      height="auto"
+                      width="auto"
+                    />
+                    <span>点击下载</span>
+                  </a>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="root"></div>
+    <footer style="display: none" class="Index_showElement__2lhNN">
+      <div class="footer_footerBox__d6T3m">
+        <div class="footer_stageFooter__1nUHt">
+          <div>
+            <div class="footer_footerLogo__51Nim">
+              <h2>
+                <a href="/">
+                  <img
+                    loading="lazy"
+                    style="display: none"
+                    src="_next/static/images/logo-d1843a5af603136e1339959e567c61ec.png"
+                    alt="nobook"
+                    height="100%"
+                    width="100%"
+                  />
+                </a>
+              </h2>
+            </div>
+            <img
+              loading="lazy"
+              style="display: none"
+              src="_next/static/images/phone-7bb674b7762d67c47193ec8cc73ba52b.png"
+              alt="phone"
+              height="12"
+              width="12"
+            />
+            <span>400-077-1585</span>
+          </div>
+          <div class="footer_footerEmail__97bYo">
+            <img
+              loading="lazy"
+              style="display: none"
+              src="_next/static/images/email-b9074d14c831dc5db4a0c0fa85af22cf.png"
+              alt="email"
+              height="9"
+              width="12"
+            />
+            <span>contact@eeoa.com</span>
+          </div>
+        </div>
+        <div class="footer_footerInfo__JDc_h">
+          <div class="footer_footerLinks__bwukd">
+            <div class="footer_footerLinkList__2YZug">
+              <div class="footer_footerTitle__UpcVq">虚拟产品实验</div>
+              <ul>
+                <li>
+                  <a href="https://wl.nobook.com/index.html/console/templates"
+                    ><span>NB物理实验</span></a
+                  >
+                </li>
+                <li>
+                  <a href="https://hx.nobook.com/index.html/console/templates"
+                    ><span>NB化学实验</span></a
+                  >
+                </li>
+                <li>
+                  <a href="https://czsw.nobook.com/index.html/console/templates"
+                    ><span>NB初中生物</span></a
+                  >
+                </li>
+                <li>
+                  <a href="https://gzsw.nobook.com/index.html/console/templates"
+                    ><span>NB高中生物</span></a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="https://science.nobook.com/index.html/console/resources-list"
+                    ><span>NB小学科学</span></a
+                  >
+                </li>
+              </ul>
+            </div>
+            <div class="footer_footerLinkList__2YZug">
+              <div class="footer_footerTitle__UpcVq">实验测评</div>
+              <ul>
+                <li>
+                  <a href="https://www.nobook.com/web-exam.html"
+                    ><span>物理测评</span></a
+                  >
+                </li>
+                <li>
+                  <a href="https://www.nobook.com/web-exam.html"
+                    ><span>化学测评</span></a
+                  >
+                </li>
+              </ul>
+            </div>
+            <div class="footer_footerLinkList__2YZug">
+              <div class="footer_footerTitle__UpcVq">服务中心</div>
+              <ul>
+                <li>
+                  <a href="https://www.nobook.com/videoStudyIntro.html"
+                    ><span>视频教程</span></a
+                  >
+                </li>
+                <li>
+                  <a href="https://help.nobook.com/nobook/"
+                    ><span>使用手册</span></a
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer_footerQrCode__kjzUW">
+            <div class="footer_footerPublic__WaJMm">
+              <div>
+                <img
+                  loading="lazy"
+                  style="display: none"
+                  src="_next/static/images/kefu-qr-adb53a83e90b42e437c09d096e191f65.png"
+                  alt="NOBOOK微信公众号"
+                  height="100"
+                  width="100"
+                />
+              </div>
+              <div>NOBOOK微信公众号</div>
+            </div>
+            <div class="footer_footerServe__W7_9_">
+              <div id="wl-qrcode-footer">
+                <img
+                  loading="lazy"
+                  style="display: none"
+                  src="https://wework.qpic.cn/wwpic/943674_KvgU7hzyT0imdeE_1657769278/0"
+                  alt="https://wework.qpic.cn/wwpic/943674_KvgU7hzyT0imdeE_1657769278/0"
+                />
+              </div>
+              <div style="margin-top: 3px">一对一服务咨询</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer_footerRecord__Cz9vW">
+        <a
+          href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11010802030252"
+          ><img
+            alt="京公网安备"
+            width="20"
+            height="20"
+            src="https://imgcdn.nobook.com/img/20230207/guohui.png"
+          /><span>
+            © 2011-2023 nobook.com , All Rights Reserved 京公网安备
+            11010802030252号</span
+          ></a
+        ><a href="http://beian.miit.gov.cn">京ICP备09046562号-4</a>
+      </div>
+    </footer>
+
+    <script src="/umi.f61be365.js"></script>
+  </body>
+</html>
