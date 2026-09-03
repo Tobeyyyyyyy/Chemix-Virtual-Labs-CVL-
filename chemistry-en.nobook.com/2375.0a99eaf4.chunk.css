@@ -1,5 +1,1 @@
-.wrap___1DjSN { display: block; height: calc(100% - 46px); position: absolute; top: 46px; right: 2px; overflow-y: auto; }
-.wrap___1DjSN .messTitle___1U67B { font-style: normal; font-weight: 400; font-size: 12px; padding: 10px; overflow-wrap: break-word; width: 260px; }
-.wrap___1DjSN .messTitle___1U67B .mess1___3sJcf { color: rgb(249, 249, 249); }
-.wrap___1DjSN .messTitle___1U67B .mess2___C6_Ys { color: var(--them_color); cursor: pointer; }
-.compHide___2b6B3 { display: none; }
+.wrap___1DjSN{display:block;height:calc(100% - 46px);position:absolute;top:46px;right:2px;overflow-y:auto}.wrap___1DjSN .messTitle___1U67B{font-style:normal;font-weight:400;font-size:12px;padding:10px;word-wrap:break-word;width:260px}.wrap___1DjSN .messTitle___1U67B .mess1___3sJcf{color:#f9f9f9}.wrap___1DjSN .messTitle___1U67B .mess2___C6_Ys{color:var(--them_color);cursor:pointer}.compHide___2b6B3{display:none}
