@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chemix Virtual Labs (CVL)</title>
+  <style>
+    :root { --blue:#1389e8; --deep:#202b38; --line:#d9e0e7; --muted:#84909d; }
+    * { box-sizing:border-box; user-select:none; }
+    html,body { margin:0; height:100%; overflow:hidden; font-family:"Segoe UI",Arial,sans-serif; color:#44515d; }
+    body { background:#edf1f5; }
+    .topbar { height:58px; display:flex; align-items:center; justify-content:space-between; padding:0 18px; color:#fff; background:#243342; box-shadow:0 1px 5px #15212c; position:relative; z-index:5; }
+    .brand { display:flex; align-items:center; gap:13px; font-size:16px; font-weight:600; letter-spacing:.2px; }
+    .back { font-size:27px; font-weight:200; color:#dbe5ec; padding-right:12px; border-right:1px solid #53616d; cursor:pointer; }
+    .brand-mark { width:27px; height:27px; border:2px solid #35a7f5; border-radius:50%; display:grid; place-items:center; font-size:14px; color:#35a7f5; }
+    .toolbar,.toolbar-end { display:flex; height:100%; align-items:center; gap:5px; }
+    .tool { min-width:62px; height:44px; padding:4px 9px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:3px; color:#d8e1e8; font-size:11px; cursor:pointer; border-radius:4px; }
+    .tool:hover { background:#344656; color:#fff; }.tool .ico { font-size:18px; line-height:18px; }
+    .title { position:absolute; left:50%; transform:translateX(-50%); display:flex; gap:9px; align-items:center; font-size:14px; }
+    .title button { border:0; background:transparent; color:#b8c5ce; cursor:pointer; font-size:14px; }
+    .app { display:flex; height:calc(100vh - 58px); }
+    .workbench { position:relative; flex:1; overflow:hidden; background-color:#f8fafc; background-image:linear-gradient(#eef2f6 1px,transparent 1px),linear-gradient(90deg,#eef2f6 1px,transparent 1px); background-size:24px 24px; }
+    .workbench.plain { background-image:none; }
+    #pixi-canvas { position:absolute; inset:0; width:100%; height:100%; }
+    .notice { position:absolute; bottom:15px; left:50%; transform:translateX(-50%); color:#aab4be; font-size:11px; white-space:nowrap; pointer-events:none; }
+    .canvas-tools { position:absolute; left:18px; bottom:18px; display:flex; align-items:center; background:#fff; border:1px solid var(--line); border-radius:5px; box-shadow:0 2px 8px #bbc5ce88; overflow:hidden; z-index:2; }
+    .canvas-tools button { border:0; background:#fff; color:#6c7985; border-right:1px solid #e3e8ec; height:38px; min-width:38px; font-size:16px; cursor:pointer; }
+    .canvas-tools button:hover { color:var(--blue); background:#f1f8ff; }.zoom { font-size:12px!important; min-width:67px!important; }
+    .drawer { width:344px; display:flex; background:#fff; border-left:1px solid #cbd4dc; box-shadow:-3px 0 9px #1c334018; z-index:3; }
+    .categories { width:68px; background:#f2f5f8; border-right:1px solid var(--line); display:flex; flex-direction:column; align-items:center; padding-top:5px; }
+    .category { width:100%; min-height:68px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; color:#7b8792; font-size:10px; text-align:center; cursor:pointer; border-left:3px solid transparent; padding:4px; }
+    .category .cat-icon { font-size:22px; color:#8996a2; }.category.active { color:var(--blue); background:#fff; border-left-color:var(--blue); }.category.active .cat-icon{color:var(--blue);}
+    .drawer-main { flex:1; min-width:0; display:flex; flex-direction:column; }
+    .drawer-head { height:48px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:9px; padding:0 13px; }
+    .drawer-head input { border:0; outline:0; font-size:12px; flex:1; color:#53616d; background:transparent; }.drawer-head input::placeholder{color:#a6b0b8}
+    .view-toggle { color:var(--blue); font-size:17px; cursor:pointer; }.section { padding:12px 13px 5px; display:flex; justify-content:space-between; font-size:12px; color:#6d7985; }.section span{color:#a0aab3;font-size:11px}
+    .item-grid { padding:8px 12px 18px; display:grid; grid-template-columns:repeat(2,1fr); gap:10px; overflow:auto; }.item-grid::-webkit-scrollbar{width:5px}.item-grid::-webkit-scrollbar-thumb{background:#cbd4dc;border-radius:5px}
+    .item { border:1px solid #e0e5e9; border-radius:4px; min-height:118px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:5px; cursor:grab; position:relative; background:#fff; transition:.15s; }
+    .item:hover { border-color:#62b8f3; box-shadow:0 2px 8px #168de522; }.item:active{cursor:grabbing}.item img{height:78px; width:110px; object-fit:contain; pointer-events:none}.item-name{font-size:11px;color:#6a7681;text-align:center;white-space:nowrap;max-width:145px;overflow:hidden;text-overflow:ellipsis}.vip{position:absolute;top:4px;right:5px;color:#f19a29;font-size:9px}
+    .placed { position:absolute; cursor:grab; transform:translate(-50%,-50%) scale(var(--item-scale, 1)); z-index:1; filter:drop-shadow(0 3px 3px #56616a33); }.placed:active{cursor:grabbing}.placed img{width:132px;height:132px;object-fit:contain;pointer-events:none}.placed.selected{outline:2px solid #1d9af0;outline-offset:5px;border-radius:4px}
+    .empty { position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; color:#c3cbd2; font-size:14px; }.empty strong{display:block;font-size:42px;font-weight:300;text-align:center;color:#d9e0e6}
+    @media(max-width:800px){.drawer{width:290px}.title{display:none}.tool{min-width:45px}.tool-label{display:none}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="back" title="Back">‹</span><span class="brand-mark">C</span><span>Chemix Virtual Labs (CVL)</span></div>
+    <div class="toolbar">
+      <div class="tool" id="save"><span class="ico">▣</span><span class="tool-label">Save</span></div>
+      <div class="tool" id="clear"><span class="ico">▱</span><span class="tool-label">Clear</span></div>
+      <div class="tool"><span class="ico">⚙</span><span class="tool-label">Setting</span></div>
+    </div>
+    <div class="title"><span id="lab-title">Unnamed experiment</span><button id="rename" title="Rename experiment">✎</button></div>
+    <div class="toolbar-end"><div class="tool"><span class="ico">▣</span><span class="tool-label">Teaching demo</span></div></div>
+  </header>
+  <main class="app">
+    <section class="workbench" id="workspace">
+      <div class="empty" id="empty"><div><strong>＋</strong>Drag equipment here to start</div></div>
+      <div class="canvas-tools"><button id="center" title="Center">⌖</button><button class="zoom" id="zoom">100%</button><button id="lock" title="Lock canvas">♧</button><button id="paint" title="Background">♢</button><button id="minus">−</button><button id="plus">＋</button></div>
+      <div class="notice">Safety Warning: Chemical experiments carry risks. Do not imitate in real life.</div>
+    </section>
+    <aside class="drawer">
+      <nav class="categories">
+        <div class="category active"><span class="cat-icon">⚗</span>Reaction<br>vessel</div>
+        <div class="category"><span class="cat-icon">♨</span>Assistive<br>devices</div>
+        <div class="category"><span class="cat-icon">▣</span>Solid<br>chemical</div>
+        <div class="category"><span class="cat-icon">◈</span>Liquid<br>chemicals</div>
+        <div class="category"><span class="cat-icon">◌</span>Gas<br>chemicals</div>
+      </nav>
+      <div class="drawer-main">
+        <div class="drawer-head"><span>⌕</span><input id="search" placeholder="Search equipment"><span class="view-toggle">▦</span></div>
+        <div class="section">Reaction vessel <span id="count"></span></div>
+        <div class="item-grid" id="equipment-grid"></div>
+      </div>
+    </aside>
+  </main>
+  <script>
+    const root = 'chemistry-en.nobook.com/assets/chemIcons/reactor/';
+    const equipment = [
+      ['4e98bbf5.png','Beaker (100 mL)'],['9cbea716.png','Round-bottom flask'],['9f348efa.png','Separatory funnel'],['227eb8eb.png','Erlenmeyer flask'],['504c9a8d.png','Test tube'],['581f8fdb.png','Gas bottle'],['583f57a6.png','Dropper bottle'],['662e2a8e.png','Conical flask'],['668e32af.png','Measuring cylinder'],['4014a4a9.png','Evaporating dish'],['14647a4b.png','Reagent bottle'],['a8f59785.png','Small test tube'],['b3fd337a.png','Spirit lamp'],['c4db6b11.png','Tripod stand'],['cbf6475c.png','Glass rod'],['f8ff4f0b.png','Burette']
+    ];
+    const grid=document.getElementById('equipment-grid'), workspace=document.getElementById('workspace'), empty=document.getElementById('empty'), search=document.getElementById('search');
+    let selected=null, zoomLevel=1, locked=false;
+    // Render the editable equipment catalogue from the small, readable list above.
+    function render(filter=''){ grid.innerHTML=''; const list=equipment.filter(x=>x[1].toLowerCase().includes(filter.toLowerCase())); document.getElementById('count').textContent=list.length+' items'; list.forEach(([image,name])=>{ const card=document.createElement('div'); card.className='item'; card.draggable=true; card.dataset.image=root+image; card.dataset.name=name; const imageEl=document.createElement('img'); imageEl.src=root+image; imageEl.alt=name; const nameEl=document.createElement('span'); nameEl.className='item-name'; nameEl.textContent=name; card.append(imageEl,nameEl); card.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',card.dataset.image+'|'+card.dataset.name);}); card.addEventListener('dblclick',()=>spawn(card.dataset.image, name, workspace.clientWidth/2, workspace.clientHeight/2)); grid.appendChild(card); }); }
+    // Add one piece of equipment to the canvas and keep its name available for saving.
+    function spawn(image,name,x,y){ if(locked)return; empty.style.display='none'; const el=document.createElement('div'); el.className='placed'; el.dataset.image=image; el.dataset.name=name; el.style.left=x+'px';el.style.top=y+'px';el.style.setProperty('--item-scale',zoomLevel);el.title=name; const imageEl=document.createElement('img'); imageEl.src=image; imageEl.alt=name; el.append(imageEl); workspace.appendChild(el); el.addEventListener('pointerdown',e=>{if(locked)return; if(selected)selected.classList.remove('selected'); selected=el;el.classList.add('selected'); const ox=e.clientX-el.offsetLeft,oy=e.clientY-el.offsetTop; el.setPointerCapture(e.pointerId); const move=a=>{el.style.left=(a.clientX-ox)+'px';el.style.top=(a.clientY-oy)+'px'}; el.addEventListener('pointermove',move);el.addEventListener('pointerup',()=>el.removeEventListener('pointermove',move),{once:true}); }); }
+    workspace.addEventListener('dragover',e=>e.preventDefault()); workspace.addEventListener('drop',e=>{e.preventDefault(); const [image,name]=(e.dataTransfer.getData('text/plain')||'|').split('|'); if(image)spawn(image,name,e.clientX-workspace.getBoundingClientRect().left,e.clientY-workspace.getBoundingClientRect().top);});
+    search.addEventListener('input',e=>render(e.target.value)); document.querySelectorAll('.category').forEach(c=>c.addEventListener('click',()=>{document.querySelector('.category.active').classList.remove('active');c.classList.add('active');}));
+    document.getElementById('clear').onclick=()=>{document.querySelectorAll('.placed').forEach(e=>e.remove());empty.style.display='grid';selected=null};
+    document.getElementById('save').onclick=()=>{localStorage.setItem('cvl-lab',JSON.stringify({title:document.getElementById('lab-title').textContent,items:[...document.querySelectorAll('.placed')].map(e=>({image:e.dataset.image,name:e.dataset.name,left:e.style.left,top:e.style.top}))})); document.getElementById('save').querySelector('.tool-label').textContent='Saved'; setTimeout(()=>document.getElementById('save').querySelector('.tool-label').textContent='Save',1200)};
+    document.getElementById('rename').onclick=()=>{const n=prompt('Experiment name',document.getElementById('lab-title').textContent);if(n&&n.trim())document.getElementById('lab-title').textContent=n.trim()};
+    document.getElementById('lock').onclick=e=>{locked=!locked;e.currentTarget.textContent=locked?'♙':'♧';};
+    document.getElementById('paint').onclick=()=>workspace.classList.toggle('plain');
+    function updateZoom(){ document.getElementById('zoom').textContent=Math.round(zoomLevel*100)+'%'; document.querySelectorAll('.placed').forEach(item=>item.style.setProperty('--item-scale',zoomLevel)); }
+    document.getElementById('plus').onclick=()=>{zoomLevel=Math.min(1.5,zoomLevel+.1);updateZoom();};
+    document.getElementById('minus').onclick=()=>{zoomLevel=Math.max(.6,zoomLevel-.1);updateZoom();};
+    document.getElementById('center').onclick=()=>document.querySelectorAll('.placed').forEach((e,i)=>{e.style.left=(workspace.clientWidth/2+(i%3-1)*150)+'px';e.style.top=(workspace.clientHeight/2+Math.floor(i/3)*140-70)+'px'});
+    document.addEventListener('keydown',e=>{if((e.key==='Delete'||e.key==='Backspace')&&selected&&!locked){selected.remove();selected=null;if(!document.querySelector('.placed'))empty.style.display='grid'}if(e.key==='Escape'&&selected){selected.classList.remove('selected');selected=null}});
+    let saved=null;
+    try { saved=JSON.parse(localStorage.getItem('cvl-lab')||'null'); } catch (error) { console.warn('CVL could not restore the saved experiment.',error); }
+    if(saved&&Array.isArray(saved.items)){document.getElementById('lab-title').textContent=saved.title||'Unnamed experiment';saved.items.forEach(item=>{spawn(item.image,item.name,parseFloat(item.left),parseFloat(item.top));})}
+    render();
+  </script>
+</body>
+</html>
