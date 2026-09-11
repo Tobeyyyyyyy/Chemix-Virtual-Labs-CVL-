@@ -14,16 +14,16 @@
       <div class="tool" id="clear"><span class="ico">▱</span><span class="tool-label">Clear</span></div>
       <div class="tool" id="settings" tabindex="0" title="Open lab settings"><span class="ico">⚙</span><span class="tool-label">Settings</span></div>
     </div>
-    <div class="title"><span id="lab-title">Unnamed experiment</span><button id="rename" title="Rename experiment">✎</button></div>
-    <div class="toolbar-end"><div class="tool"><span class="ico">▣</span><span class="tool-label">Teaching demo</span></div></div>
+    <div class="title"><span id="lab-title">Unnamed experiment</span><button id="rename" title="Rename experiment" aria-label="Rename experiment">✎</button></div>
   </header>
   <main class="app">
     <section class="workbench" id="workspace">
       <div class="empty" id="empty"><div><strong>＋</strong>Drag equipment here to start</div></div>
-      <div class="canvas-tools"><button id="center" title="Center">⌖</button><button class="zoom" id="zoom">100%</button><button id="lock" title="Lock canvas">♧</button><button id="paint" title="Background">♢</button><button id="minus">−</button><button id="plus">＋</button></div>
+      <div class="canvas-tools"><button id="center" title="Center items" aria-label="Center items">⌖</button><button class="zoom" id="zoom" title="Zoom level" aria-label="Zoom level">100%</button><button id="lock" title="Lock canvas" aria-label="Lock canvas">♧</button><button id="paint" title="Toggle background" aria-label="Toggle background">♢</button><button id="minus" title="Zoom out" aria-label="Zoom out">−</button><button id="plus" title="Zoom in" aria-label="Zoom in">＋</button></div>
       <div class="notice">Safety Warning: Chemical experiments carry risks. Do not imitate in real life.</div>
     </section>
     <aside class="drawer">
+      <button id="drawer-toggle" class="drawer-toggle-btn" title="Minimize drawer" aria-label="Minimize drawer" aria-expanded="true">◀</button>
       <nav class="categories">
         <div class="category active" data-category="reactor"><span class="cat-icon">⚗</span>Reaction<br>vessel</div>
         <div class="category" data-category="aid"><span class="cat-icon">♨</span>Assistive<br>devices</div>
@@ -39,6 +39,6 @@
     </aside>
   </main>
   <script src="app/catalog.js"></script>
-  <script src="app/app.js"></script>
+  <script type="module" src="app/app.js"></script>
 </body>
 </html>

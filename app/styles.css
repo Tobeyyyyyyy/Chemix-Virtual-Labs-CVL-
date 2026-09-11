@@ -189,12 +189,14 @@ body {
 }
 
 .drawer {
+  position: relative;
   width: 344px;
   display: flex;
   background: #fff;
   border-left: 1px solid #cbd4dc;
   box-shadow: -3px 0 9px #1c334018;
   z-index: 3;
+  transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .categories {
@@ -251,7 +253,7 @@ body {
   display: flex;
   align-items: center;
   gap: 9px;
-  padding: 0 13px;
+  padding: 0 50px 0 13px;
 }
 
 .drawer-head input {
@@ -265,6 +267,48 @@ body {
 
 .drawer-head input::placeholder {
   color: #a6b0b8;
+}
+
+.drawer-toggle-btn {
+  position: absolute;
+  top: 10px;
+  right: 8px;
+  z-index: 2;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  font-size: 13px;
+  color: inherit;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.drawer-toggle-btn:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.drawer.collapsed {
+  width: 68px;
+}
+
+.drawer.collapsed .drawer-main {
+  width: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.drawer.collapsed .section,
+.drawer.collapsed .item-grid {
+  display: none;
+}
+
+.drawer.collapsed .drawer-toggle-btn {
+  transform: rotate(180deg);
+  right: 8px;
 }
 
 .view-toggle {
@@ -355,9 +399,7 @@ body {
 .placed {
   position: absolute;
   cursor: grab;
-  transform: translate(-50%, -50%) scale(var(--item-scale, 1));
   z-index: 1;
-  filter: drop-shadow(0 3px 3px #56616a33);
 }
 
 .placed:active {

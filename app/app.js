@@ -1,3 +1,5 @@
+import { InteractionManager, installInteractionStyles } from './InteractionManager.js';
+
 (function () {
   const { assetRoot, categories, categoryLabels, discoverAssets } = window.CVL;
   const categoryKeys = ['reactor', 'aid', 'solid', 'liquid', 'gas'];
@@ -8,10 +10,47 @@
   const sectionTitle = document.querySelector('.section').firstChild;
   const count = document.getElementById('count');
   const categoryButtons = [...document.querySelectorAll('.category')];
+  const drawer = document.querySelector('.drawer');
+  const drawerToggle = document.getElementById('drawer-toggle');
   let activeCategory = 'reactor';
   let selected = null;
   let zoomLevel = 1;
   let locked = false;
+  installInteractionStyles();
+  const interactionManager = new InteractionManager({
+    root: workspace,
+    objectSelector: '.placed',
+    cameraEnabled: false
+  });
+  interactionManager.on('select', ({ object }) => {
+    selected = object.element;
+  });
+
+  function configureChemistryObject(element, name) {
+    const normalizedName = name.toLowerCase();
+    const metadata = normalizedName.includes('beaker')
+      ? {
+          type: 'beaker',
+          tilt: '30',
+          container: 'true',
+          capacity: '100',
+          snap: 'beakerSlot'
+        }
+      : normalizedName.includes('test tube')
+        ? {
+            type: 'test-tube',
+            tilt: '45',
+            container: 'true',
+            capacity: '20'
+          }
+        : null;
+
+    if (!metadata) return;
+
+    Object.entries(metadata).forEach(([key, value]) => {
+      element.dataset[key] = value;
+    });
+  }
 
   function render(filter = '') {
     const normalizedFilter = filter.toLowerCase();
@@ -69,8 +108,10 @@
 
     const element = document.createElement('div');
     element.className = 'placed';
+    element.classList.add('lab-object');
     element.dataset.image = image;
     element.dataset.name = name;
+    configureChemistryObject(element, name);
     element.style.left = x + 'px';
     element.style.top = y + 'px';
     element.style.setProperty('--item-scale', zoomLevel);
@@ -82,27 +123,9 @@
     imageEl.onerror = () => element.classList.add('asset-missing');
     element.appendChild(imageEl);
     workspace.appendChild(element);
-
-    element.addEventListener('pointerdown', (event) => {
-      if (locked) return;
-      if (selected) selected.classList.remove('selected');
-
-      selected = element;
-      element.classList.add('selected');
-      const offsetX = event.clientX - element.offsetLeft;
-      const offsetY = event.clientY - element.offsetTop;
-      element.setPointerCapture(event.pointerId);
-
-      const move = (moveEvent) => {
-        element.style.left = moveEvent.clientX - offsetX + 'px';
-        element.style.top = moveEvent.clientY - offsetY + 'px';
-      };
-      element.addEventListener('pointermove', move);
-      element.addEventListener(
-        'pointerup',
-        () => element.removeEventListener('pointermove', move),
-        { once: true }
-      );
+    interactionManager.registerObject(element, {
+      type: name,
+      baseScale: zoomLevel
     });
   }
 
@@ -111,6 +134,7 @@
     document.querySelectorAll('.placed').forEach((item) => {
       item.style.setProperty('--item-scale', zoomLevel);
     });
+    interactionManager.setScale(zoomLevel);
   }
 
   categoryButtons.forEach((button, index) => {
@@ -137,8 +161,17 @@
   });
 
   search.addEventListener('input', (event) => render(event.target.value));
+  drawerToggle.addEventListener('click', () => {
+    const collapsed = drawer.classList.toggle('collapsed');
+    drawerToggle.title = collapsed ? 'Expand drawer' : 'Minimize drawer';
+    drawerToggle.setAttribute('aria-label', drawerToggle.title);
+    drawerToggle.setAttribute('aria-expanded', String(!collapsed));
+  });
   document.getElementById('clear').onclick = () => {
-    document.querySelectorAll('.placed').forEach((item) => item.remove());
+    document.querySelectorAll('.placed').forEach((item) => {
+      interactionManager.unregisterObject(item);
+      item.remove();
+    });
     empty.style.display = 'grid';
     selected = null;
   };
@@ -159,18 +192,38 @@
     label.textContent = 'Saved';
     setTimeout(() => (label.textContent = 'Save'), 1200);
   };
-  document.getElementById('rename').onclick = () => {
+  function renameExperiment() {
     const name = prompt(
       'Experiment name',
       document.getElementById('lab-title').textContent
     );
     if (name && name.trim()) {
-      document.getElementById('lab-title').textContent = name.trim();
+      const title = name.trim();
+      document.getElementById('lab-title').textContent = title;
+      localStorage.setItem(
+        'cvl-lab',
+        JSON.stringify({
+          title,
+          items: [...document.querySelectorAll('.placed')].map((item) => ({
+            image: item.dataset.image,
+            name: item.dataset.name,
+            left: item.style.left,
+            top: item.style.top
+          }))
+        })
+      );
     }
-  };
+  }
+  document.getElementById('rename').onclick = renameExperiment;
   document.getElementById('lock').onclick = (event) => {
     locked = !locked;
+    interactionManager.setLocked(locked);
     event.currentTarget.textContent = locked ? '♙' : '♧';
+    event.currentTarget.title = locked ? 'Unlock canvas' : 'Lock canvas';
+    event.currentTarget.setAttribute(
+      'aria-label',
+      locked ? 'Unlock canvas' : 'Lock canvas'
+    );
   };
   document.getElementById('paint').onclick = () => workspace.classList.toggle('plain');
   document.getElementById('plus').onclick = () => {
@@ -183,14 +236,14 @@
   };
   document.getElementById('center').onclick = () =>
     document.querySelectorAll('.placed').forEach((item, index) => {
-      item.style.left = workspace.clientWidth / 2 + (index % 3 - 1) * 150 + 'px';
-      item.style.top =
-        workspace.clientHeight / 2 + Math.floor(index / 3) * 140 - 70 + 'px';
+      const object = interactionManager.objects.get(item);
+      if (!object) return;
+      object.targetX = workspace.clientWidth / 2 + (index % 3 - 1) * 150;
+      object.targetY =
+        workspace.clientHeight / 2 + Math.floor(index / 3) * 140 - 70;
     });
   document.getElementById('settings').onclick = () =>
     alert('CVL settings: use the background, lock, and zoom tools to configure your bench.');
-  document.querySelector('.toolbar-end .tool').onclick = () =>
-    alert('Teaching demo: choose a vessel, add chemicals, then drag them together to simulate an experiment.');
 
   document.addEventListener('keydown', (event) => {
     if (
@@ -198,12 +251,15 @@
       selected &&
       !locked
     ) {
+      interactionManager.unregisterObject(selected);
       selected.remove();
       selected = null;
       if (!document.querySelector('.placed')) empty.style.display = 'grid';
     }
     if (event.key === 'Escape' && selected) {
-      selected.classList.remove('selected');
+      selected.classList.remove('selected', 'lab-selected');
+      const object = interactionManager.objects.get(selected);
+      if (object) object.selected = false;
       selected = null;
     }
   });
