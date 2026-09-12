@@ -98,6 +98,46 @@ body {
   line-height: 18px;
 }
 
+.production-dialog {
+  width: min(1180px, 92vw);
+  height: min(760px, 88vh);
+  padding: 0;
+  border: 1px solid #cbd4dc;
+  border-radius: 8px;
+  box-shadow: 0 12px 40px #15212c66;
+  overflow: hidden;
+}
+
+.production-dialog::backdrop {
+  background: #15212c88;
+}
+
+.production-dialog-head {
+  height: 42px;
+  padding: 0 12px 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #fff;
+  background: #243342;
+}
+
+.production-dialog-head button {
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.production-dialog iframe {
+  display: block;
+  width: 100%;
+  height: calc(100% - 42px);
+  border: 0;
+}
+
 .title {
   position: absolute;
   left: 50%;
@@ -411,6 +451,54 @@ body {
   height: 132px;
   object-fit: contain;
   pointer-events: none;
+}
+
+.placed.heating::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 4px;
+  width: 24px;
+  height: 34px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at 50% 90%, #fff7a8 0 16%, #ff9d32 34%, #e74b28 58%, transparent 72%);
+  filter: blur(1px);
+  pointer-events: none;
+  animation: cvl-flicker .22s infinite alternate;
+}
+
+.placed.heating-source::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 7px;
+  width: 22px;
+  height: 30px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at 50% 90%, #fff7a8 0 14%, #ff9d32 34%, #e74b28 58%, transparent 72%);
+  pointer-events: none;
+  animation: cvl-flicker .22s infinite alternate;
+}
+
+.placed.spawned {
+  animation: cvl-spawn .35s ease-out;
+}
+
+.placed.collision {
+  animation: cvl-collision .45s ease-out;
+}
+
+@keyframes cvl-flicker {
+  to { transform: translateX(-50%) scale(.82, 1.12); opacity: .72; }
+}
+
+@keyframes cvl-spawn {
+  from { opacity: 0; transform: scale(.75); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes cvl-collision {
+  35% { filter: drop-shadow(0 0 8px #f4b942); }
 }
 
 .placed.selected {

@@ -1,5 +1,6 @@
 (function () {
   const assetRoot = 'CVLproperty/assets/chemIcons/';
+  const propertyAssets = window.CVLPropertyAssets || {};
   const categories = {
     reactor: [
       ['4e98bbf5.png', 'Beaker (100 mL)'],
@@ -70,6 +71,14 @@
     liquid: 'Liquid chemicals',
     gas: 'Gas chemicals'
   };
+
+  Object.keys(propertyAssets).forEach((category) => {
+    propertyAssets[category].forEach((item) => {
+      if (!categories[category].some((existing) => existing[0] === item[0])) {
+        categories[category].push(item);
+      }
+    });
+  });
 
   async function discoverAssets(onUpdated) {
     await Promise.all(

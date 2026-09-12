@@ -1,0 +1,7 @@
+# Local archives and development environments
+/archive/
+/.venv/
+
+# Generated local state
+.DS_Store
+*.log

@@ -13,6 +13,7 @@
       <div class="tool" id="save"><span class="ico">▣</span><span class="tool-label">Save</span></div>
       <div class="tool" id="clear"><span class="ico">▱</span><span class="tool-label">Clear</span></div>
       <div class="tool" id="settings" tabindex="0" title="Open lab settings"><span class="ico">⚙</span><span class="tool-label">Settings</span></div>
+      <div class="tool" id="production-runtime" title="Open production runtime"><span class="ico">◫</span><span class="tool-label">CVL engine</span></div>
     </div>
     <div class="title"><span id="lab-title">Unnamed experiment</span><button id="rename" title="Rename experiment" aria-label="Rename experiment">✎</button></div>
   </header>
@@ -38,7 +39,15 @@
       </div>
     </aside>
   </main>
+  <dialog id="production-dialog" class="production-dialog" aria-labelledby="production-title">
+    <div class="production-dialog-head">
+      <strong id="production-title">CVL production runtime</strong>
+      <button id="production-close" type="button" aria-label="Close production runtime">×</button>
+    </div>
+    <iframe title="CVL production runtime" src="http://localhost:8082/chemical/new.html"></iframe>
+  </dialog>
+  <script src="app/property-assets.js"></script>
   <script src="app/catalog.js"></script>
-  <script type="module" src="app/app.js"></script>
+  <script type="module" src="src/main.js"></script>
 </body>
 </html>

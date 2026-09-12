@@ -1,0 +1,34 @@
+{
+  "Beaker (100 mL)": {
+    "type": "beaker",
+    "container": true,
+    "capacity": 100,
+    "tilt": 30
+  },
+  "Test tube": {
+    "type": "test-tube",
+    "container": true,
+    "capacity": 20,
+    "tilt": 45,
+    "visual": "CVLproperty/libs/chem/assets/container/SmallTestTube.png"
+  },
+  "Round-bottom flask": {
+    "type": "flask",
+    "container": true,
+    "capacity": 250,
+    "tilt": 25,
+    "visual": "CVLproperty/libs/chem/assets/container/RoundBottomFlask.png"
+  },
+  "Alcohol lamp": {
+    "type": "bunsen-burner",
+    "heating": true,
+    "maxTemperature": 900,
+    "visual": "CVLproperty/libs/chem/assets/assist/AlcoholBurner.png"
+  },
+  "Spirit lamp": {
+    "type": "bunsen-burner",
+    "heating": true,
+    "maxTemperature": 900,
+    "visual": "CVLproperty/libs/chem/assets/assist/AlcoholBurner.png"
+  }
+}
