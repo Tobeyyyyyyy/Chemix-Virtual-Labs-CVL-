@@ -1,53 +1,423 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Chemix Virtual Labs (CVL)</title>
-  <link rel="stylesheet" href="app/styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chemix Virtual Labs</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand"><span class="back" title="Back">‹</span><span class="brand-mark">C</span><span>Chemix Virtual Labs (CVL)</span></div>
-    <div class="toolbar">
-      <div class="tool" id="save"><span class="ico">▣</span><span class="tool-label">Save</span></div>
-      <div class="tool" id="clear"><span class="ico">▱</span><span class="tool-label">Clear</span></div>
-      <div class="tool" id="settings" tabindex="0" title="Open lab settings"><span class="ico">⚙</span><span class="tool-label">Settings</span></div>
-      <div class="tool" id="production-runtime" title="Open production runtime"><span class="ico">◫</span><span class="tool-label">CVL engine</span></div>
-    </div>
-    <div class="title"><span id="lab-title">Unnamed experiment</span><button id="rename" title="Rename experiment" aria-label="Rename experiment">✎</button></div>
-  </header>
-  <main class="app">
-    <section class="workbench" id="workspace">
-      <div class="empty" id="empty"><div><strong>＋</strong>Drag equipment here to start</div></div>
-      <div class="canvas-tools"><button id="center" title="Center items" aria-label="Center items">⌖</button><button class="zoom" id="zoom" title="Zoom level" aria-label="Zoom level">100%</button><button id="lock" title="Lock canvas" aria-label="Lock canvas">♧</button><button id="paint" title="Toggle background" aria-label="Toggle background">♢</button><button id="minus" title="Zoom out" aria-label="Zoom out">−</button><button id="plus" title="Zoom in" aria-label="Zoom in">＋</button></div>
-      <div class="notice">Safety Warning: Chemical experiments carry risks. Do not imitate in real life.</div>
-    </section>
-    <aside class="drawer">
-      <button id="drawer-toggle" class="drawer-toggle-btn" title="Minimize drawer" aria-label="Minimize drawer" aria-expanded="true">◀</button>
-      <nav class="categories">
-        <div class="category active" data-category="reactor"><span class="cat-icon">⚗</span>Reaction<br>vessel</div>
-        <div class="category" data-category="aid"><span class="cat-icon">♨</span>Assistive<br>devices</div>
-        <div class="category" data-category="solid"><span class="cat-icon">▣</span>Solid<br>chemical</div>
-        <div class="category" data-category="liquid"><span class="cat-icon">◈</span>Liquid<br>chemicals</div>
-        <div class="category" data-category="gas"><span class="cat-icon">◌</span>Gas<br>chemicals</div>
-      </nav>
-      <div class="drawer-main">
-        <div class="drawer-head"><span>⌕</span><input id="search" placeholder="Search equipment"><span class="view-toggle">▦</span></div>
-        <div class="section">Reaction vessel <span id="count"></span></div>
-        <div class="item-grid" id="equipment-grid"></div>
+  <canvas id="cursorFx"></canvas>
+  <canvas id="workspace"></canvas>
+
+  <header class="app-header glass">
+    <div class="brand">
+      <div class="brand-icon">⚗</div>
+      <div class="brand-text">
+        <span class="brand-title">Chemix Virtual Labs</span>
+        <span class="brand-subtitle">Workspace</span>
       </div>
-    </aside>
-  </main>
-  <dialog id="production-dialog" class="production-dialog" aria-labelledby="production-title">
-    <div class="production-dialog-head">
-      <strong id="production-title">CVL production runtime</strong>
-      <button id="production-close" type="button" aria-label="Close production runtime">×</button>
     </div>
-    <iframe title="CVL production runtime" src="http://localhost:8082/chemical/new.html"></iframe>
-  </dialog>
-  <script src="app/property-assets.js"></script>
-  <script src="app/catalog.js"></script>
-  <script type="module" src="src/main.js"></script>
+
+    <nav class="nav">
+      <a href="#" class="nav-link active" data-page="home">Home</a>
+      <a href="#" class="nav-link" data-page="experiments">Experiments</a>
+      <a href="#" class="nav-link" data-page="library">Library</a>
+      <a href="#" class="nav-link" data-page="about">About</a>
+    </nav>
+
+    <div class="actions">
+      <button id="settingsBtn" class="icon-btn" title="Settings">⚙</button>
+      <button class="icon-btn" title="Help">?</button>
+    </div>
+  </header>
+
+  <div id="toolbar" role="toolbar" aria-label="Canvas tools">
+    <button id="centerBtn" class="tb-btn" title="Center view">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="7"/>
+        <circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/>
+        <line x1="12" y1="2" x2="12" y2="5"/>
+        <line x1="12" y1="19" x2="12" y2="22"/>
+        <line x1="2" y1="12" x2="5" y2="12"/>
+        <line x1="19" y1="12" x2="22" y2="12"/>
+      </svg>
+    </button>
+
+    <button id="lockViewBtn" class="tb-btn" title="Lock view">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="5" y="11" width="14" height="10" rx="2"/>
+        <path d="M8 11V7a4 4 0 0 1 7.6-1.8"/>
+      </svg>
+    </button>
+
+    <div class="tb-divider"></div>
+
+    <div class="zoom-group">
+      <button id="zoomBtn" class="tb-btn zoom-display" title="Zoom options">
+        <span id="zoomValue">100%</span>
+        <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="6 15 12 9 18 15"/>
+        </svg>
+      </button>
+
+      <div id="zoomMenu" class="zoom-menu">
+        <button data-zoom="0.25">25%</button>
+        <button data-zoom="0.5">50%</button>
+        <button data-zoom="0.75">75%</button>
+        <button data-zoom="1" class="current">100%</button>
+        <button data-zoom="1.5">150%</button>
+        <button data-zoom="2">200%</button>
+        <button data-zoom="4">400%</button>
+        <div class="zoom-menu-divider"></div>
+        <button data-zoom="fit">Fit to screen</button>
+      </div>
+    </div>
+
+    <div class="tb-gap"></div>
+
+    <button class="tb-btn tool-btn" data-tool="brush" title="Brush">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14.5 5.5l4 4L9 19l-4 1 1-4 8.5-10.5z"/>
+        <path d="M13 7l4 4"/>
+      </svg>
+    </button>
+
+    <button class="tb-btn tool-btn" data-tool="crop" title="Crop / Select">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 2v14a2 2 0 0 0 2 2h14"/>
+        <path d="M2 6h14a2 2 0 0 1 2 2v14"/>
+      </svg>
+    </button>
+
+    <button id="zoomOutBtn" class="tb-btn" title="Zoom out">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="7"/>
+        <line x1="16.5" y1="16.5" x2="21" y2="21"/>
+        <line x1="8" y1="11" x2="14" y2="11"/>
+      </svg>
+    </button>
+
+    <button id="zoomInBtn" class="tb-btn" title="Zoom in">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="7"/>
+        <line x1="16.5" y1="16.5" x2="21" y2="21"/>
+        <line x1="8" y1="11" x2="14" y2="11"/>
+        <line x1="11" y1="8" x2="11" y2="14"/>
+      </svg>
+    </button>
+  </div>
+
+  <div id="drawer" class="drawer collapsed">
+    <button id="drawerToggle" class="drawer-toggle" title="Expand tools">
+      <span class="nav-arrow"></span>
+    </button>
+
+    <nav class="drawer-rail" aria-label="Tool categories">
+      <button class="rail-item active" data-category="vessel">
+        <span class="rail-icon">🧪</span>
+        <span class="rail-label">Reaction<br>vessel</span>
+      </button>
+      <button class="rail-item" data-category="assistive">
+        <span class="rail-icon">🕯️</span>
+        <span class="rail-label">Assistive<br>devices</span>
+      </button>
+      <button class="rail-item" data-category="solid">
+        <span class="rail-icon">💊</span>
+        <span class="rail-label">Solid<br>chemical</span>
+      </button>
+      <button class="rail-item" data-category="liquid">
+        <span class="rail-icon">💧</span>
+        <span class="rail-label">Liquid<br>chemicals</span>
+      </button>
+      <button class="rail-item" data-category="gas">
+        <span class="rail-icon">☁️</span>
+        <span class="rail-label">Gas<br>chemicals</span>
+      </button>
+    </nav>
+
+    <section class="drawer-panel" aria-label="Tool list">
+      <header class="drawer-header">
+        <div class="drawer-search">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="7"/>
+            <line x1="16.5" y1="16.5" x2="21" y2="21"/>
+          </svg>
+          <input type="text" placeholder="Search tools…" />
+        </div>
+        <button class="drawer-grid-btn" title="Grid view">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
+        </button>
+      </header>
+
+      <div class="drawer-category" id="drawerCategory">
+        <div class="cat-badge" id="catBadge">🧪</div>
+        <div class="cat-text">
+          <h2 id="catTitle">Reaction Vessel</h2>
+          <p id="catSubtitle">Containers where reactions happen</p>
+        </div>
+      </div>
+
+      <div class="drawer-body" id="drawerBody"></div>
+
+      <div id="sizePicker" class="size-picker" aria-hidden="true">
+        <header class="size-header">
+          <div class="size-title">
+            <span class="size-icon" id="sizeIcon">🧪</span>
+            <div>
+              <div class="size-name" id="sizeName">Item</div>
+              <div class="size-sub" id="sizeSub">—</div>
+            </div>
+          </div>
+          <button id="sizeClose" class="size-close" title="Close">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="6" y1="6" x2="18" y2="18"/>
+              <line x1="18" y1="6" x2="6" y2="18"/>
+            </svg>
+          </button>
+        </header>
+        <div class="size-list" id="sizeList"></div>
+      </div>
+    </section>
+  </div>
+
+  <section id="page-experiments" class="page" aria-hidden="true">
+    <div class="page-hero">
+      <div class="page-hero-text">
+        <h1>Experiments</h1>
+        <p>Ready-to-run lab simulations. Pick a preset and load it straight into the workspace.</p>
+      </div>
+      <div class="page-hero-actions">
+        <button class="btn-primary">+ New experiment</button>
+      </div>
+    </div>
+
+    <div class="page-toolbar">
+      <div class="chip-row">
+        <button class="chip active">All</button>
+        <button class="chip">Beginner</button>
+        <button class="chip">Intermediate</button>
+        <button class="chip">Advanced</button>
+      </div>
+      <div class="page-search">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7"/>
+          <line x1="16.5" y1="16.5" x2="21" y2="21"/>
+        </svg>
+        <input type="text" placeholder="Search experiments…" />
+      </div>
+    </div>
+
+    <div class="page-body">
+      <div class="exp-grid">
+        <article class="exp-card">
+          <div class="exp-thumb" style="--c1:#6aa8ff;--c2:#a56bff">🧪</div>
+          <div class="exp-meta">
+            <h3>Acid–Base Titration</h3>
+            <p>Determine the concentration of an unknown acid using a standardized base.</p>
+            <div class="exp-tags"><span class="tag">Intermediate</span><span class="tag ghost">25 min</span></div>
+          </div>
+          <button class="exp-open">Open →</button>
+        </article>
+        <article class="exp-card">
+          <div class="exp-thumb" style="--c1:#22c55e;--c2:#14b8a6">💧</div>
+          <div class="exp-meta">
+            <h3>Electrolysis of Water</h3>
+            <p>Split water into hydrogen and oxygen and observe the 2:1 gas ratio.</p>
+            <div class="exp-tags"><span class="tag">Beginner</span><span class="tag ghost">15 min</span></div>
+          </div>
+          <button class="exp-open">Open →</button>
+        </article>
+        <article class="exp-card">
+          <div class="exp-thumb" style="--c1:#ff7a59;--c2:#ff3f8e">🔥</div>
+          <div class="exp-meta">
+            <h3>Flame Test</h3>
+            <p>Identify metal ions by the characteristic colour they emit in a flame.</p>
+            <div class="exp-tags"><span class="tag">Beginner</span><span class="tag ghost">10 min</span></div>
+          </div>
+          <button class="exp-open">Open →</button>
+        </article>
+        <article class="exp-card">
+          <div class="exp-thumb" style="--c1:#a56bff;--c2:#5b3fff">⚗️</div>
+          <div class="exp-meta">
+            <h3>Simple Distillation</h3>
+            <p>Separate a liquid mixture based on differences in boiling points.</p>
+            <div class="exp-tags"><span class="tag">Advanced</span><span class="tag ghost">45 min</span></div>
+          </div>
+          <button class="exp-open">Open →</button>
+        </article>
+        <article class="exp-card">
+          <div class="exp-thumb" style="--c1:#f2c94c;--c2:#f2994a">💎</div>
+          <div class="exp-meta">
+            <h3>CuSO₄ Crystallization</h3>
+            <p>Grow copper sulfate crystals by slow evaporation of a saturated solution.</p>
+            <div class="exp-tags"><span class="tag">Intermediate</span><span class="tag ghost">30 min</span></div>
+          </div>
+          <button class="exp-open">Open →</button>
+        </article>
+        <article class="exp-card">
+          <div class="exp-thumb" style="--c1:#38bdf8;--c2:#818cf8">🌿</div>
+          <div class="exp-meta">
+            <h3>Photosynthesis O₂</h3>
+            <p>Measure oxygen evolution from aquatic plants under varying light.</p>
+            <div class="exp-tags"><span class="tag">Intermediate</span><span class="tag ghost">40 min</span></div>
+          </div>
+          <button class="exp-open">Open →</button>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="page-library" class="page" aria-hidden="true">
+    <div class="page-hero">
+      <div class="page-hero-text">
+        <h1>Library</h1>
+        <p>Reference data for glassware, reagents, and lab safety. Searchable offline.</p>
+      </div>
+    </div>
+
+    <div class="page-toolbar">
+      <div class="chip-row">
+        <button class="chip active" data-lib="glassware">Glassware</button>
+        <button class="chip" data-lib="reagents">Reagents</button>
+        <button class="chip" data-lib="safety">Safety</button>
+        <button class="chip" data-lib="formulas">Formulas</button>
+      </div>
+      <div class="page-search">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="7"/>
+          <line x1="16.5" y1="16.5" x2="21" y2="21"/>
+        </svg>
+        <input type="text" placeholder="Search the library…" />
+      </div>
+    </div>
+
+    <div class="page-body">
+      <div class="lib-grid">
+        <article class="lib-card"><div class="lib-icon">🧪</div><h3>Beaker</h3><p class="lib-sub">Liquid handling · 50–1000 mL</p><p>Flat-bottomed cylindrical vessel with a small spout. Used for mixing, heating, and rough volume measurement.</p></article>
+        <article class="lib-card"><div class="lib-icon">⚗️</div><h3>Erlenmeyer Flask</h3><p class="lib-sub">Liquid handling · 50–2000 mL</p><p>Conical flask with a narrow neck. Ideal for swirling without splashing; often used in titrations.</p></article>
+        <article class="lib-card"><div class="lib-icon">🧫</div><h3>Test Tube</h3><p class="lib-sub">Small-scale reactions</p><p>Finger-sized glass tube for holding small samples and running qualitative tests.</p></article>
+        <article class="lib-card"><div class="lib-icon">💧</div><h3>Burette</h3><p class="lib-sub">Precise volume delivery</p><p>Graduated tube with a stopcock, used for accurate titration of known volumes to ±0.05 mL.</p></article>
+        <article class="lib-card"><div class="lib-icon">📏</div><h3>Graduated Cylinder</h3><p class="lib-sub">Volume measurement</p><p>Tall narrow cylinder for accurate liquid volume reading. Read the meniscus at eye level.</p></article>
+        <article class="lib-card"><div class="lib-icon">🌡️</div><h3>Thermometer</h3><p class="lib-sub">Temperature · −10 to 110 °C</p><p>Mercury or alcohol thermometer for monitoring reaction and solvent temperature.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section id="page-about" class="page" aria-hidden="true">
+    <div class="page-hero about-hero">
+      <div class="about-logo">⚗</div>
+      <div class="page-hero-text">
+        <h1>Chemix Virtual Labs</h1>
+        <p class="about-tag">A browser-based workspace for designing, simulating, and teaching chemistry experiments.</p>
+      </div>
+    </div>
+
+    <div class="page-body about-body">
+      <div class="about-columns">
+        <div class="about-block"><h3>What it is</h3><p>Chemix Virtual Labs lets teachers and students draw lab setups, run chemical simulations, and explore reactions — all in the browser. No installation, no plugins.</p></div>
+        <div class="about-block"><h3>Features</h3><ul><li>Drag-and-drop apparatus library</li><li>Real-time acid/base titration curves</li><li>Snap-to-grid, zoom, and pan canvas</li><li>Light &amp; dark themes, accent colours</li><li>Offline-first with local persistence</li></ul></div>
+        <div class="about-block"><h3>Technology</h3><p>HTML5 Canvas for the workspace, vanilla JavaScript for logic, and glassmorphism CSS for the interface. No frameworks, no build step.</p></div>
+        <div class="about-block"><h3>Credits</h3><p>Iconography and apparatus data inspired by the open chemistry education community. Built with respect for real lab safety practice.</p></div>
+      </div>
+
+      <div class="about-footer">
+        <div class="about-stat"><span class="stat-num">v0.1.0</span><span class="stat-label">Version</span></div>
+        <div class="about-stat"><span class="stat-num">MIT</span><span class="stat-label">License</span></div>
+        <div class="about-stat"><span class="stat-num">∞</span><span class="stat-label">Experiments to come</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div id="settingsBackdrop" class="settings-backdrop"></div>
+
+  <aside id="settingsPanel" class="settings-panel" aria-label="Settings">
+    <header class="settings-header">
+      <div class="settings-title"><span class="settings-dot"></span><h2>Settings</h2></div>
+      <button id="settingsClose" class="settings-close" title="Close">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="6" y1="6" x2="18" y2="18"/>
+          <line x1="18" y1="6" x2="6" y2="18"/>
+        </svg>
+      </button>
+    </header>
+
+    <div class="settings-body">
+      <section class="settings-section">
+        <h3>Appearance</h3>
+        <div class="setting-row">
+          <label>Theme</label>
+          <div class="segmented" data-setting="theme">
+            <button data-value="light">Light</button>
+            <button data-value="dark">Dark</button>
+            <button data-value="system">System</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <label>Accent color</label>
+          <div class="swatches" data-setting="accent">
+            <button class="swatch" data-value="ocean"  style="--c1:#6aa8ff;--c2:#a56bff" title="Ocean"></button>
+            <button class="swatch" data-value="sunset" style="--c1:#ff7a59;--c2:#ff3f8e" title="Sunset"></button>
+            <button class="swatch" data-value="forest" style="--c1:#22c55e;--c2:#14b8a6" title="Forest"></button>
+            <button class="swatch" data-value="grape"  style="--c1:#a56bff;--c2:#5b3fff" title="Grape"></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h3>Canvas</h3>
+        <div class="setting-row">
+          <label>Grid density</label>
+          <div class="segmented" data-setting="grid">
+            <button data-value="compact">Compact</button>
+            <button data-value="normal">Normal</button>
+            <button data-value="spacious">Spacious</button>
+          </div>
+        </div>
+        <div class="setting-row">
+          <label>Snap to grid</label>
+          <button class="toggle" data-setting="snap" role="switch" aria-checked="false"><span class="toggle-knob"></span></button>
+        </div>
+        <div class="setting-row">
+          <label>Show origin axes</label>
+          <button class="toggle" data-setting="axes" role="switch" aria-checked="true"><span class="toggle-knob"></span></button>
+        </div>
+        <div class="setting-row">
+          <label>Default zoom</label>
+          <select class="select" data-setting="zoom">
+            <option value="0.25">25%</option>
+            <option value="0.5">50%</option>
+            <option value="0.75">75%</option>
+            <option value="1" selected>100%</option>
+            <option value="1.5">150%</option>
+            <option value="2">200%</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h3>Effects</h3>
+        <div class="setting-row">
+          <label>Neon cursor</label>
+          <button class="toggle" data-setting="cursorFx" role="switch" aria-checked="true"><span class="toggle-knob"></span></button>
+        </div>
+        <div class="setting-row">
+          <label>Mouse trail</label>
+          <button class="toggle" data-setting="trailFx" role="switch" aria-checked="true"><span class="toggle-knob"></span></button>
+        </div>
+      </section>
+
+      <div class="settings-footer">
+        <button id="resetSettings" class="btn-ghost">Reset to defaults</button>
+      </div>
+    </div>
+  </aside>
+
+  <script src="script.js"></script>
 </body>
 </html>
