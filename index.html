@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <!-- ===== Intro / Landing screen ===== -->
+  <!-- ===== Intro / Landing page ===== -->
   <div id="introScreen" class="intro-screen">
     <div class="intro-bg">
       <div class="intro-blob intro-blob--a"></div>
@@ -16,66 +16,186 @@
       <div class="intro-grid"></div>
     </div>
 
-    <div class="intro-content">
-      <div class="intro-brand">
-        <div class="intro-logo">⚗</div>
-        <div class="intro-brand-text">
-          <span class="intro-brand-title">Chemix Virtual Labs</span>
-          <span class="intro-brand-sub">Browser-based chemistry workspace</span>
+    <div class="intro-shell">
+      <aside class="intro-rail">
+        <div class="intro-rail-brand">
+          <div class="intro-logo">⚗</div>
+          <span class="intro-rail-name">Chemix<br>Virtual Labs</span>
         </div>
-      </div>
 
-      <h1 class="intro-title">
-        Design, simulate &amp; teach
-        <span class="intro-gradient">chemistry experiments</span>
-      </h1>
+        <nav class="intro-rail-nav">
+          <button class="intro-rail-item active" data-scroll="hero">
+            <span class="intro-rail-icon">✦</span>
+            <span class="intro-rail-label">Welcome</span>
+          </button>
+          <button class="intro-rail-item" data-scroll="features">
+            <span class="intro-rail-icon">🧪</span>
+            <span class="intro-rail-label">Features</span>
+          </button>
+          <button class="intro-rail-item" data-scroll="experiments">
+            <span class="intro-rail-icon">⚗️</span>
+            <span class="intro-rail-label">Experiments</span>
+          </button>
+          <button class="intro-rail-item" data-scroll="about">
+            <span class="intro-rail-icon">💠</span>
+            <span class="intro-rail-label">About</span>
+          </button>
+        </nav>
 
-      <p class="intro-subtitle">
-        A virtual lab where you can drag apparatus onto the canvas, combine reagents,
-        and explore reactions — all without leaving your browser.
-      </p>
+        <div class="intro-rail-footer">
+          <span class="intro-rail-dot"></span>
+          <span>v0.1.0</span>
+        </div>
+      </aside>
 
-      <div class="intro-actions">
-        <button id="introStart" class="intro-btn intro-btn--primary">
-          <span class="intro-btn-icon">▶</span>
-          Start new experiment
-        </button>
-        <button id="introContinue" class="intro-btn intro-btn--ghost" hidden>
-          Continue where you left off
-        </button>
-      </div>
-
-      <div class="intro-features">
-        <div class="intro-feature">
-          <span class="intro-feature-icon">🧪</span>
-          <div>
-            <strong>Drag &amp; drop</strong>
-            <span>Apparatus library with 200+ items</span>
+      <main class="intro-main" id="introMain">
+        <section class="intro-section intro-hero" id="section-hero">
+          <div class="intro-hero-badge">
+            <span class="intro-hero-dot"></span>
+            Browser-based · No install
           </div>
-        </div>
-        <div class="intro-feature">
-          <span class="intro-feature-icon">⚗️</span>
-          <div>
-            <strong>Real chemistry</strong>
-            <span>Symbols, formulas &amp; concentrations</span>
-          </div>
-        </div>
-        <div class="intro-feature">
-          <span class="intro-feature-icon">💧</span>
-          <div>
-            <strong>Zoom &amp; pan</strong>
-            <span>Infinite canvas with grid snap</span>
-          </div>
-        </div>
-      </div>
 
-      <footer class="intro-footer">
-        <span>v0.1.0</span>
-        <span>·</span>
-        <span>MIT License</span>
-        <span>·</span>
-        <span>Made for learning</span>
-      </footer>
+          <h1 class="intro-hero-title">
+            <span class="intro-line intro-line-1">A virtual lab</span>
+            <span class="intro-line intro-line-2">
+              for <span class="intro-gradient">chemistry</span>
+            </span>
+            <span class="intro-line intro-line-3">in your browser</span>
+          </h1>
+
+          <p class="intro-hero-sub">
+            Design setups, drop apparatus onto an infinite canvas, mix reagents,
+            and explore reactions — no installation, no plugins.
+          </p>
+
+          <div class="intro-hero-actions">
+            <button id="introStart" class="intro-btn intro-btn--primary">
+              <span class="intro-btn-icon">▶</span>
+              Start new experiment
+            </button>
+            <button id="introContinue" class="intro-btn intro-btn--ghost" hidden>
+              Continue where you left off
+            </button>
+          </div>
+
+          <div class="intro-hero-scroll">
+            <span>Scroll to explore</span>
+            <span class="intro-scroll-arrow">↓</span>
+          </div>
+        </section>
+
+        <section class="intro-section intro-block" id="section-features">
+          <header class="intro-block-head">
+            <span class="intro-block-eyebrow">Features</span>
+            <h2 class="intro-block-title">Everything a virtual lab should be</h2>
+            <p class="intro-block-sub">A clean workspace with the essentials — nothing you don't need.</p>
+          </header>
+
+          <div class="intro-features">
+            <article class="intro-feature">
+              <span class="intro-feature-icon">🧪</span>
+              <h3>200+ apparatus</h3>
+              <p>Beakers, flasks, burners, clamps, and everything in between.</p>
+            </article>
+            <article class="intro-feature">
+              <span class="intro-feature-icon">⚗️</span>
+              <h3>Real chemistry</h3>
+              <p>Formulas, concentrations, and physical constants done right.</p>
+            </article>
+            <article class="intro-feature">
+              <span class="intro-feature-icon">🖱️</span>
+              <h3>Drag &amp; drop</h3>
+              <p>Pull items out of the drawer and arrange them on the canvas.</p>
+            </article>
+            <article class="intro-feature">
+              <span class="intro-feature-icon">🧲</span>
+              <h3>Magnetic snap</h3>
+              <p>Substances merge into containers and tools attach like magnets.</p>
+            </article>
+            <article class="intro-feature">
+              <span class="intro-feature-icon">⚡</span>
+              <h3>Live reactions</h3>
+              <p>Neutralisations, precipitations, and displacements in real time.</p>
+            </article>
+            <article class="intro-feature">
+              <span class="intro-feature-icon">💾</span>
+              <h3>Offline-first</h3>
+              <p>Your preferences and session persist locally, no server needed.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="intro-section intro-block" id="section-experiments">
+          <header class="intro-block-head">
+            <span class="intro-block-eyebrow">Ready-to-run</span>
+            <h2 class="intro-block-title">Experiment templates</h2>
+            <p class="intro-block-sub">Load a preset straight into the workspace and start modifying.</p>
+          </header>
+
+          <div class="intro-exp-grid">
+            <article class="intro-exp-card">
+              <div class="intro-exp-thumb" style="--c1:#6aa8ff;--c2:#a56bff">🧪</div>
+              <h3>Acid–Base Titration</h3>
+              <p>Determine an unknown acid with a standardized base.</p>
+              <span class="intro-exp-tag">Intermediate</span>
+            </article>
+            <article class="intro-exp-card">
+              <div class="intro-exp-thumb" style="--c1:#22c55e;--c2:#14b8a6">💧</div>
+              <h3>Electrolysis of Water</h3>
+              <p>Split water and observe the 2:1 gas ratio.</p>
+              <span class="intro-exp-tag">Beginner</span>
+            </article>
+            <article class="intro-exp-card">
+              <div class="intro-exp-thumb" style="--c1:#ff7a59;--c2:#ff3f8e">🔥</div>
+              <h3>Flame Test</h3>
+              <p>Identify metal ions by their characteristic colours.</p>
+              <span class="intro-exp-tag">Beginner</span>
+            </article>
+            <article class="intro-exp-card">
+              <div class="intro-exp-thumb" style="--c1:#a56bff;--c2:#5b3fff">⚗️</div>
+              <h3>Simple Distillation</h3>
+              <p>Separate a mixture by boiling point differences.</p>
+              <span class="intro-exp-tag">Advanced</span>
+            </article>
+          </div>
+        </section>
+
+        <section class="intro-section intro-block" id="section-about">
+          <div class="intro-about">
+            <div class="intro-about-text">
+              <span class="intro-block-eyebrow">About</span>
+              <h2 class="intro-block-title">Built for teachers, students &amp; curious minds</h2>
+              <p class="intro-block-sub">
+                Chemix Virtual Labs is a lightweight workspace with no build step, no server,
+                and no tracking. Just you and the canvas.
+              </p>
+              <ul class="intro-about-list">
+                <li>Vanilla JS + HTML5 Canvas</li>
+                <li>MIT licensed</li>
+                <li>Works offline</li>
+              </ul>
+            </div>
+
+            <div class="intro-cta-card">
+              <span class="intro-cta-emoji">⚗</span>
+              <h3>Ready to start?</h3>
+              <p>Jump into the workspace and start experimenting.</p>
+              <button id="introStartBottom" class="intro-btn intro-btn--primary">
+                <span class="intro-btn-icon">▶</span>
+                Launch workspace
+              </button>
+            </div>
+          </div>
+
+          <footer class="intro-footer">
+            <span>Chemix Virtual Labs</span>
+            <span>·</span>
+            <span>v0.1.0</span>
+            <span>·</span>
+            <span>MIT License</span>
+          </footer>
+        </section>
+      </main>
     </div>
   </div>
 
@@ -393,7 +513,7 @@
     <div class="page-body about-body">
       <div class="about-columns">
         <div class="about-block"><h3>What it is</h3><p>Chemix Virtual Labs lets teachers and students draw lab setups, run chemical simulations, and explore reactions — all in the browser. No installation, no plugins.</p></div>
-        <div class="about-block"><h3>Features</h3><ul><li>Drag-and-drop apparatus library</li><li>Real-time acid/base titration curves</li><li>Snap-to-grid, zoom, and pan canvas</li><li>Light &amp; dark themes, accent colours</li><li>Offline-first with local persistence</li></ul></div>
+        <div class="about-block"><h3>Features</h3><ul><li>Drag-and-drop apparatus library</li><li>Magnetic snap and merge</li><li>Live reaction effects</li><li>Snap-to-grid, zoom, and pan canvas</li><li>Light &amp; dark themes, accent colours</li></ul></div>
         <div class="about-block"><h3>Technology</h3><p>HTML5 Canvas for the workspace, vanilla JavaScript for logic, and glassmorphism CSS for the interface. No frameworks, no build step.</p></div>
         <div class="about-block"><h3>Credits</h3><p>Iconography and apparatus data inspired by the open chemistry education community. Built with respect for real lab safety practice.</p></div>
       </div>
