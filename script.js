@@ -26,7 +26,6 @@
     if (fresh) { try { localStorage.removeItem('chemix.session'); } catch (e) {} }
     dismiss();
   }
-
   if (startBtn) startBtn.addEventListener('click', () => launch(true));
   if (startBtnBottom) startBtnBottom.addEventListener('click', () => launch(true));
   if (contBtn) contBtn.addEventListener('click', () => launch(false));
@@ -118,28 +117,106 @@ let draggingPlaced = null;
 let snapTarget = null;
 
 // =====================================================
-// Attach / merge / reaction config
+// Attach / merge / combination config
 // =====================================================
 const SNAP_DISTANCE = 110;
-const SUBSTANCE_TYPES = ['solid', 'liquid', 'gas'];
+const SUBSTANCE_TYPES = ['solid', 'liquid', 'gas', 'elements', 'compound'];
 const CONTAINER_TYPES = ['vessel'];
 const TOOL_TYPES = ['assistive'];
 
+// Container reactions (substance inside a container)
 const RECIPES = [
-  { needs: ['HCl', 'NaOH'],       name: 'Neutralisation', result: 'NaCl + H₂O',        color: '#a8d8b8', effect: 'bubbles' },
-  { needs: ['HCl', 'KOH'],        name: 'Neutralisation', result: 'KCl + H₂O',          color: '#a8d8b8', effect: 'bubbles' },
-  { needs: ['H₂SO₄', 'NaOH'],     name: 'Neutralisation', result: 'Na₂SO₄ + H₂O',       color: '#a8d8b8', effect: 'bubbles' },
-  { needs: ['HCl', 'NaHCO₃'],     name: 'Effervescence',  result: 'NaCl + H₂O + CO₂',   color: '#f0e8d8', effect: 'bubbles' },
-  { needs: ['HCl', 'CaCO₃'],      name: 'Effervescence',  result: 'CaCl₂ + H₂O + CO₂',  color: '#f0e8d8', effect: 'bubbles' },
-  { needs: ['CH₃COOH', 'NaHCO₃'], name: 'Effervescence',  result: 'NaCH₃COO + H₂O + CO₂', color: '#f0e8d8', effect: 'bubbles' },
-  { needs: ['AgNO₃', 'NaCl'],     name: 'Precipitation',  result: 'AgCl↓ + NaNO₃',      color: '#f0f0f0', effect: 'precipitate' },
-  { needs: ['BaCl₂', 'Na₂SO₄'],   name: 'Precipitation',  result: 'BaSO₄↓ + 2 NaCl',    color: '#f0f0f0', effect: 'precipitate' },
-  { needs: ['Pb(NO₃)₂', 'KI'],    name: 'Precipitation',  result: 'PbI₂↓ + 2 KNO₃',     color: '#f7e05a', effect: 'precipitate' },
-  { needs: ['CuSO₄', 'NaOH'],     name: 'Complex formation', result: 'Cu(OH)₂↓ (blue)', color: '#4aa4d8', effect: 'precipitate' },
-  { needs: ['CuSO₄', 'Fe'],       name: 'Displacement',   result: 'FeSO₄ + Cu',         color: '#3a7a4a', effect: 'deposit' },
-  { needs: ['CuSO₄', 'Zn'],       name: 'Displacement',   result: 'ZnSO₄ + Cu',         color: '#3a7a4a', effect: 'deposit' },
-  { needs: ['HCl', 'Phenolphthalein'],  name: 'Indicator', result: 'Colourless',        color: '#f0f0f0', effect: null },
-  { needs: ['NaOH', 'Phenolphthalein'], name: 'Indicator', result: 'Pink colour',       color: '#f4a0c0', effect: null },
+  { needs: ['HCl', 'NaOH'],       name: 'Neutralisation',  result: 'NaCl + H₂O',          color: '#a8d8b8', effect: 'bubbles' },
+  { needs: ['HCl', 'KOH'],        name: 'Neutralisation',  result: 'KCl + H₂O',           color: '#a8d8b8', effect: 'bubbles' },
+  { needs: ['H₂SO₄', 'NaOH'],     name: 'Neutralisation',  result: 'Na₂SO₄ + H₂O',        color: '#a8d8b8', effect: 'bubbles' },
+  { needs: ['HCl', 'NaHCO₃'],     name: 'Effervescence',   result: 'NaCl + H₂O + CO₂',    color: '#f0e8d8', effect: 'bubbles' },
+  { needs: ['HCl', 'CaCO₃'],      name: 'Effervescence',   result: 'CaCl₂ + H₂O + CO₂',   color: '#f0e8d8', effect: 'bubbles' },
+  { needs: ['CH₃COOH', 'NaHCO₃'], name: 'Effervescence',   result: 'NaCH₃COO + H₂O + CO₂', color: '#f0e8d8', effect: 'bubbles' },
+  { needs: ['AgNO₃', 'NaCl'],     name: 'Precipitation',   result: 'AgCl↓ + NaNO₃',       color: '#f0f0f0', effect: 'precipitate' },
+  { needs: ['BaCl₂', 'Na₂SO₄'],   name: 'Precipitation',   result: 'BaSO₄↓ + 2 NaCl',     color: '#f0f0f0', effect: 'precipitate' },
+  { needs: ['Pb(NO₃)₂', 'KI'],    name: 'Precipitation',   result: 'PbI₂↓ + 2 KNO₃',      color: '#f7e05a', effect: 'precipitate' },
+  { needs: ['CuSO₄', 'NaOH'],     name: 'Complex formation', result: 'Cu(OH)₂↓ (blue)',   color: '#4aa4d8', effect: 'precipitate' },
+  { needs: ['CuSO₄', 'Fe'],       name: 'Displacement',    result: 'FeSO₄ + Cu',          color: '#3a7a4a', effect: 'deposit' },
+  { needs: ['CuSO₄', 'Zn'],       name: 'Displacement',    result: 'ZnSO₄ + Cu',          color: '#3a7a4a', effect: 'deposit' },
+  { needs: ['HCl', 'Phenolphthalein'],  name: 'Indicator', result: 'Colourless',          color: '#f0f0f0', effect: null },
+  { needs: ['NaOH', 'Phenolphthalein'], name: 'Indicator', result: 'Pink colour',         color: '#f4a0c0', effect: null },
+];
+
+// =====================================================
+// MOLECULE COMBINATION TABLE
+// =====================================================
+const COMBOS = [
+  // ---- Diatomic molecule formation ----
+  { a: 'H',  b: 'H',  product: 'H₂',  name: 'Hydrogen gas',  equation: 'H + H → H₂',     color: '#a8c8ff' },
+  { a: 'O',  b: 'O',  product: 'O₂',  name: 'Oxygen gas',    equation: 'O + O → O₂',     color: '#ff8080' },
+  { a: 'N',  b: 'N',  product: 'N₂',  name: 'Nitrogen gas',  equation: 'N + N → N₂',     color: '#8080ff' },
+  { a: 'Cl', b: 'Cl', product: 'Cl₂', name: 'Chlorine gas',  equation: 'Cl + Cl → Cl₂',  color: '#88ff88' },
+  { a: 'F',  b: 'F',  product: 'F₂',  name: 'Fluorine gas',  equation: 'F + F → F₂',     color: '#ffe066' },
+  { a: 'I',  b: 'I',  product: 'I₂',  name: 'Iodine vapor',  equation: 'I + I → I₂',     color: '#c090ff' },
+
+  // ---- Water formation (multiple paths) ----
+  { a: 'H',  b: 'O',   product: 'OH',   name: 'Hydroxide radical',  equation: 'H + O → •OH',      color: '#a8e8e8' },
+  { a: 'H',  b: 'OH',  product: 'H₂O',  name: 'Water',              equation: 'H + •OH → H₂O',    color: '#5adcdc' },
+  { a: 'H₂', b: 'O',   product: 'H₂O',  name: 'Water',              equation: 'H₂ + O → H₂O',     color: '#5adcdc' },
+  { a: 'H',  b: 'O₂',  product: 'H₂O',  name: 'Water',              equation: '2H + O₂ → H₂O',    color: '#5adcdc' },
+  { a: 'H₂', b: 'O₂',  product: 'H₂O',  name: 'Water',              equation: '2H₂ + O₂ → 2H₂O',  color: '#5adcdc' },
+  { a: 'H₂O',b: 'O',   product: 'H₂O₂', name: 'Hydrogen peroxide',  equation: 'H₂O + O → H₂O₂',   color: '#c8e8ff' },
+
+  // ---- Hydrogen chloride ----
+  { a: 'H',  b: 'Cl',  product: 'HCl', name: 'Hydrogen chloride', equation: 'H + Cl → HCl',      color: '#e0f0ff' },
+  { a: 'H₂', b: 'Cl₂', product: 'HCl', name: 'Hydrogen chloride', equation: 'H₂ + Cl₂ → 2HCl',   color: '#e0f0ff' },
+
+  // ---- Sodium chloride ----
+  { a: 'Na', b: 'Cl',  product: 'NaCl', name: 'Sodium chloride',   equation: 'Na + Cl → NaCl',      color: '#f0f0f0' },
+  { a: 'Na', b: 'Cl₂', product: 'NaCl', name: 'Sodium chloride',   equation: '2Na + Cl₂ → 2NaCl',   color: '#f0f0f0' },
+
+  // ---- Sodium hydroxide ----
+  { a: 'Na', b: 'OH',  product: 'NaOH', name: 'Sodium hydroxide',  equation: 'Na + •OH → NaOH',         color: '#f8e8d0' },
+  { a: 'Na', b: 'H₂O', product: 'NaOH', name: 'Sodium hydroxide',  equation: '2Na + 2H₂O → 2NaOH + H₂', color: '#f8e8d0' },
+
+  // ---- Ammonia (stepwise + direct) ----
+  { a: 'N',   b: 'H', product: 'NH',  name: 'Imidogen radical', equation: 'N + H → •NH',       color: '#c0c8ff' },
+  { a: 'NH',  b: 'H', product: 'NH₂', name: 'Amino radical',    equation: '•NH + H → •NH₂',    color: '#c0c8ff' },
+  { a: 'NH₂', b: 'H', product: 'NH₃', name: 'Ammonia',          equation: '•NH₂ + H → NH₃',    color: '#c0c8ff' },
+  { a: 'N₂',  b: 'H₂',product: 'NH₃', name: 'Ammonia',          equation: 'N₂ + 3H₂ → 2NH₃',   color: '#c0c8ff' },
+
+  // ---- Carbon oxides ----
+  { a: 'C',  b: 'O',  product: 'CO',  name: 'Carbon monoxide',  equation: '2C + O₂ → 2CO',    color: '#b0b0b0' },
+  { a: 'C',  b: 'O₂', product: 'CO₂', name: 'Carbon dioxide',   equation: 'C + O₂ → CO₂',     color: '#c8c8c8' },
+  { a: 'CO', b: 'O',  product: 'CO₂', name: 'Carbon dioxide',   equation: '2CO + O₂ → 2CO₂',  color: '#c8c8c8' },
+  { a: 'CO', b: 'O₂', product: 'CO₂', name: 'Carbon dioxide',   equation: '2CO + O₂ → 2CO₂',  color: '#c8c8c8' },
+
+  // ---- Sulfur oxides ----
+  { a: 'S',   b: 'O₂', product: 'SO₂', name: 'Sulfur dioxide',   equation: 'S + O₂ → SO₂',     color: '#f0e8a0' },
+  { a: 'SO₂', b: 'O',  product: 'SO₃', name: 'Sulfur trioxide',  equation: '2SO₂ + O₂ → 2SO₃', color: '#f0e8a0' },
+
+  // ---- Nitrogen oxides ----
+  { a: 'N',  b: 'O',  product: 'NO',  name: 'Nitric oxide',     equation: 'N + O → NO',       color: '#c0d8ff' },
+  { a: 'NO', b: 'O',  product: 'NO₂', name: 'Nitrogen dioxide', equation: '2NO + O₂ → 2NO₂',  color: '#d09080' },
+
+  // ---- Common metal oxides ----
+  { a: 'Ca', b: 'O',  product: 'CaO',   name: 'Calcium oxide',    equation: '2Ca + O₂ → 2CaO',     color: '#e8e8e8' },
+  { a: 'Mg', b: 'O',  product: 'MgO',   name: 'Magnesium oxide',  equation: '2Mg + O₂ → 2MgO',     color: '#f0f0f0' },
+  { a: 'Zn', b: 'O',  product: 'ZnO',   name: 'Zinc oxide',       equation: '2Zn + O₂ → 2ZnO',     color: '#e0e0e0' },
+  { a: 'Cu', b: 'O',  product: 'CuO',   name: 'Copper(II) oxide', equation: '2Cu + O₂ → 2CuO',     color: '#c08060' },
+  { a: 'Fe', b: 'O',  product: 'FeO',   name: 'Iron(II) oxide',   equation: '2Fe + O₂ → 2FeO',     color: '#4a4a4a' },
+  { a: 'Al', b: 'O',  product: 'Al₂O₃', name: 'Aluminium oxide',  equation: '4Al + 3O₂ → 2Al₂O₃',  color: '#d8d8d8' },
+
+  // ---- Metal hydroxides ----
+  { a: 'Ca', b: 'OH', product: 'Ca(OH)₂', name: 'Calcium hydroxide',   equation: 'Ca + 2•OH → Ca(OH)₂',   color: '#f0f0e8' },
+  { a: 'Mg', b: 'OH', product: 'Mg(OH)₂', name: 'Magnesium hydroxide', equation: 'Mg + 2•OH → Mg(OH)₂',   color: '#f0f0e8' },
+
+  // ---- Acids from oxides ----
+  { a: 'H₂O', b: 'CO₂', product: 'H₂CO₃', name: 'Carbonic acid',  equation: 'H₂O + CO₂ → H₂CO₃',   color: '#e0f0e8' },
+  { a: 'H₂O', b: 'SO₂', product: 'H₂SO₃', name: 'Sulfurous acid', equation: 'H₂O + SO₂ → H₂SO₃',   color: '#f0e8a0' },
+  { a: 'H₂O', b: 'SO₃', product: 'H₂SO₄', name: 'Sulfuric acid',  equation: 'H₂O + SO₃ → H₂SO₄',   color: '#f0e8a0' },
+
+  // ---- Potassium compounds ----
+  { a: 'K',  b: 'Cl', product: 'KCl',  name: 'Potassium chloride',  equation: '2K + Cl₂ → 2KCl',  color: '#f0f0f0' },
+  { a: 'K',  b: 'OH', product: 'KOH',  name: 'Potassium hydroxide', equation: 'K + •OH → KOH',    color: '#f8e8d0' },
+
+  // ---- Iodine compound ----
+  { a: 'H',  b: 'I',  product: 'HI',   name: 'Hydrogen iodide',     equation: 'H₂ + I₂ → 2HI',    color: '#c090ff' },
 ];
 
 // =====================================================
@@ -208,17 +285,30 @@ function roundRectPath(c, x, y, w, h, r) {
   c.quadraticCurveTo(x, y, x + r, y);
   c.closePath();
 }
-function getItemAccent(type) {
+function getItemAccent(item) {
+  if (!item) return '#6aa8ff';
+  if (item.accentColor) return item.accentColor;
+  const type = item.type;
   if (type === 'solid')     return '#7bc8ff';
   if (type === 'liquid')    return '#5adcdc';
   if (type === 'gas')       return '#b4a0ff';
   if (type === 'vessel')    return '#6aa8ff';
   if (type === 'assistive') return '#ffc878';
+  if (type === 'elements')  return '#ff9ec4';
+  if (type === 'compound')  return '#c4a0ff';
   return '#6aa8ff';
 }
 
 let reactionTime = 0;
-function tickReactions(dt) { reactionTime += dt; }
+function tickEffects(dt) {
+  reactionTime += dt;
+  for (const it of placedItems) {
+    if (it.combination) {
+      it.combination.time += dt;
+      if (it.combination.time > 4.2) it.combination = null;
+    }
+  }
+}
 
 function drawPlacedItems() {
   if (!placedItems.length && !snapTarget) return;
@@ -227,14 +317,13 @@ function drawPlacedItems() {
     const x = item.worldX - ITEM_W / 2;
     const y = item.worldY - ITEM_H / 2;
     const isSel = item === selectedItem;
-    const accent = getItemAccent(item.type);
+    const accent = getItemAccent(item);
     const hasSize = !!item.size;
     const isContainer = CONTAINER_TYPES.includes(item.type);
     const hasContents = isContainer && item.contents && item.contents.length > 0;
     const reaction = isContainer && item.reaction;
     const isAttached = !!item.attachedTo;
 
-    // Snap highlight
     if (item === snapTarget) {
       ctx.save();
       ctx.strokeStyle = 'rgba(106, 168, 255, 0.85)';
@@ -246,7 +335,6 @@ function drawPlacedItems() {
       ctx.restore();
     }
 
-    // Card bg
     ctx.save();
     ctx.shadowColor = reaction ? accent : 'rgba(8, 12, 22, 0.55)';
     ctx.shadowBlur = reaction ? 26 : 14;
@@ -259,7 +347,6 @@ function drawPlacedItems() {
     ctx.fill();
     ctx.restore();
 
-    // Top accent
     ctx.save();
     ctx.strokeStyle = accent;
     ctx.lineWidth = 3;
@@ -272,7 +359,6 @@ function drawPlacedItems() {
     ctx.stroke();
     ctx.restore();
 
-    // Border
     ctx.strokeStyle = isSel ? 'rgba(106, 168, 255, 0.95)' : 'rgba(255, 255, 255, 0.14)';
     ctx.lineWidth = isSel ? 2.4 : 1.2;
     roundRectPath(ctx, x, y, ITEM_W, ITEM_H, 14);
@@ -289,7 +375,6 @@ function drawPlacedItems() {
       ctx.restore();
     }
 
-    // Attached indicator
     if (isAttached) {
       ctx.save();
       ctx.fillStyle = 'rgba(106, 168, 255, 0.85)';
@@ -394,11 +479,10 @@ function drawPlacedItems() {
       }
     }
 
-    // Reaction effect
+    // Reaction effect (in container)
     if (reaction) {
       const effY = item.worldY - 90;
       const pulse = 0.6 + 0.4 * Math.sin(reactionTime * 4);
-
       ctx.save();
       const innerGlow = ctx.createRadialGradient(item.worldX, item.worldY, 10, item.worldX, item.worldY, 100);
       innerGlow.addColorStop(0, reaction.color + '66');
@@ -412,7 +496,6 @@ function drawPlacedItems() {
       if (reaction.effect === 'bubbles') effectIcon = '💨';
       else if (reaction.effect === 'precipitate') effectIcon = '❄️';
       else if (reaction.effect === 'deposit') effectIcon = '✦';
-
       if (effectIcon) {
         ctx.save();
         ctx.globalAlpha = pulse;
@@ -440,6 +523,65 @@ function drawPlacedItems() {
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(reaction.name, item.worldX, pillY + pillH / 2 + 0.5);
+    }
+
+    // Combination effect
+    if (item.combination) {
+      const t = item.combination.time;
+      let alpha = 1;
+      if (t < 0.25) alpha = t / 0.25;
+      else if (t > 3.6) alpha = Math.max(0, (4.2 - t) / 0.6);
+
+      const burst = Math.min(1, t / 0.7);
+      ctx.save();
+      ctx.globalAlpha = (1 - burst) * alpha * 0.85;
+      ctx.strokeStyle = item.combination.color;
+      ctx.lineWidth = 3;
+      ctx.shadowColor = item.combination.color;
+      ctx.shadowBlur = 18;
+      ctx.beginPath();
+      ctx.arc(item.worldX, item.worldY, 60 + burst * 100, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.save();
+      ctx.globalAlpha = (1 - burst) * alpha * 0.6;
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(item.worldX, item.worldY, 30 + burst * 130, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.save();
+      ctx.globalAlpha = alpha;
+      ctx.save();
+      ctx.shadowColor = item.combination.color;
+      ctx.shadowBlur = 24;
+
+      const eq = item.combination.equation;
+      ctx.font = 'bold 12px ui-monospace, "SF Mono", Menlo, monospace';
+      const eqW = ctx.measureText(eq).width;
+      const padX = 14;
+      const bW = eqW + padX * 2;
+      const bH = 26;
+      const bX = item.worldX - bW / 2;
+      const bY = item.worldY - ITEM_H / 2 - 46;
+
+      ctx.fillStyle = 'rgba(20, 24, 34, 0.94)';
+      roundRectPath(ctx, bX, bY, bW, bH, 12);
+      ctx.fill();
+      ctx.strokeStyle = item.combination.color;
+      ctx.lineWidth = 1.5;
+      roundRectPath(ctx, bX, bY, bW, bH, 12);
+      ctx.stroke();
+
+      ctx.fillStyle = item.combination.color;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(eq, item.worldX, bY + bH / 2 + 0.5);
+      ctx.restore();
+      ctx.restore();
     }
   });
 }
@@ -481,7 +623,7 @@ function removeSelectedItem() {
 }
 
 // =====================================================
-// Snap / attach / merge / react
+// Snap / attach / merge / combine / react
 // =====================================================
 function findSnapTarget(dragged) {
   let best = null, bestDist = SNAP_DISTANCE;
@@ -492,6 +634,14 @@ function findSnapTarget(dragged) {
     if (d < bestDist) { bestDist = d; best = it; }
   }
   return best;
+}
+
+function findCombo(symA, symB) {
+  if (!symA || !symB) return null;
+  for (const c of COMBOS) {
+    if ((c.a === symA && c.b === symB) || (c.a === symB && c.b === symA)) return c;
+  }
+  return null;
 }
 
 function handleDropWithSnap(dragged) {
@@ -507,13 +657,48 @@ function handleDropWithSnap(dragged) {
   const draggedIsTool      = TOOL_TYPES.includes(draggedType);
   const targetIsTool       = TOOL_TYPES.includes(targetType);
 
-  // Substance → Container: merge
+  // 1) Substance + Substance : try molecule combination → create NEW card
+  if (draggedIsSubstance && targetIsSubstance) {
+    const combo = findCombo(dragged.symbol, target.symbol);
+    if (combo) {
+      const spotX = (dragged.worldX + target.worldX) / 2;
+      const spotY = (dragged.worldY + target.worldY) / 2;
+
+      placedItems = placedItems.filter((it) => it !== dragged && it !== target);
+
+      const product = {
+        symbol: combo.product,
+        name: combo.name,
+        icon: null,
+        sub: combo.equation,
+        size: null,
+        worldX: spotX,
+        worldY: spotY,
+        type: 'compound',
+        accentColor: combo.color,
+        id: 'item-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+        contents: [],
+        attachedTo: null,
+        attachOffset: null,
+        reaction: null,
+        combination: { ...combo, time: 0 },
+      };
+      placedItems.push(product);
+      selectedItem = product;
+      render();
+      return;
+    }
+    attachItemBelow(dragged, target);
+    return;
+  }
+
+  // 2) Substance → Container : merge into contents
   if (draggedIsSubstance && targetIsContainer) {
     if (!target.contents) target.contents = [];
     target.contents.push({
       symbol: dragged.symbol,
       name: dragged.name,
-      color: getItemAccent(draggedType),
+      color: getItemAccent(dragged),
     });
     placedItems = placedItems.filter((it) => it !== dragged);
     selectedItem = target;
@@ -522,14 +707,14 @@ function handleDropWithSnap(dragged) {
     return;
   }
 
-  // Container ← Substance
+  // 3) Container ← Substance
   if (draggedIsContainer && targetIsSubstance) { attachItemBelow(dragged, target); return; }
 
-  // Tool ↔ Container
+  // 4) Tool ↔ Container
   if (draggedIsTool && targetIsContainer) { attachItemAbove(dragged, target); return; }
   if (draggedIsContainer && targetIsTool) { attachItemBelow(dragged, target); return; }
 
-  // Generic
+  // 5) Generic
   attachItemBelow(dragged, target);
 }
 
@@ -674,7 +859,6 @@ window.addEventListener('mousemove', (e) => {
     render();
     return;
   }
-
   const rect = canvas.getBoundingClientRect();
   if (e.clientX >= rect.left && e.clientX <= rect.right &&
       e.clientY >= rect.top && e.clientY <= rect.bottom) {
@@ -756,6 +940,7 @@ function placeItemAtVisibleCenter(item, size) {
     attachedTo: null,
     attachOffset: null,
     reaction: null,
+    combination: null,
   };
   placedItems.push(placed);
   selectedItem = placed;
@@ -795,7 +980,7 @@ function dropCardOnCanvas(clientX, clientY) {
     name: item.name, sub: item.sub || '', size: null,
     worldX: w.x, worldY: w.y, type: activeCategory,
     id: 'item-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
-    contents: [], attachedTo: null, attachOffset: null, reaction: null,
+    contents: [], attachedTo: null, attachOffset: null, reaction: null, combination: null,
   };
   placedItems.push(newItem);
   selectedItem = newItem;
@@ -863,7 +1048,7 @@ document.querySelectorAll('.tool-btn').forEach((btn) => {
 });
 
 // =====================================================
-// CATALOG — full contents
+// CATALOG
 // =====================================================
 const CATALOG = {
   vessel: [
@@ -1102,6 +1287,29 @@ const CATALOG = {
     { name: 'Hoffman Voltameter', sub: 'Electrolysis unit', icon: '⚡' },
     { name: 'Aspirator',        sub: 'Gas aspirator',       icon: '💨' },
   ],
+
+  elements: [
+    { symbol: 'H',   name: 'Hydrogen',   icon: '⚪' },
+    { symbol: 'O',   name: 'Oxygen',     icon: '🔴' },
+    { symbol: 'N',   name: 'Nitrogen',   icon: '🔵' },
+    { symbol: 'C',   name: 'Carbon',     icon: '⚫' },
+    { symbol: 'S',   name: 'Sulfur',     icon: '🟨' },
+    { symbol: 'P',   name: 'Phosphorus', icon: '🟠' },
+    { symbol: 'Cl',  name: 'Chlorine',   icon: '🟢' },
+    { symbol: 'F',   name: 'Fluorine',   icon: '🟡' },
+    { symbol: 'I',   name: 'Iodine',     icon: '🟣' },
+    { symbol: 'Na',  name: 'Sodium',     icon: '🟡' },
+    { symbol: 'K',   name: 'Potassium',  icon: '🟣' },
+    { symbol: 'Ca',  name: 'Calcium',    icon: '🩶' },
+    { symbol: 'Mg',  name: 'Magnesium',  icon: '⚙️' },
+    { symbol: 'Fe',  name: 'Iron',       icon: '🩶' },
+    { symbol: 'Cu',  name: 'Copper',     icon: '🟤' },
+    { symbol: 'Zn',  name: 'Zinc',       icon: '⚪' },
+    { symbol: 'Al',  name: 'Aluminium',  icon: '🔘' },
+    { symbol: 'OH',  name: 'Hydroxide radical', icon: '💧' },
+    { symbol: 'NH',  name: 'Imidogen radical',  icon: '💨' },
+    { symbol: 'NH₂', name: 'Amino radical',     icon: '💨' },
+  ],
 };
 
 // =====================================================
@@ -1113,6 +1321,7 @@ const CATEGORY_META = {
   solid:     { title: 'Solid Chemical',    subtitle: 'Reagents that are solid at room temperature', badge: '💊' },
   liquid:    { title: 'Liquid Chemical',   subtitle: 'Liquids, solvents, and aqueous solutions',   badge: '💧' },
   gas:       { title: 'Gas Chemical',      subtitle: 'Gases and gas collection apparatus',        badge: '☁️' },
+  elements:  { title: 'Elements & Atoms',  subtitle: 'Combine atoms into molecules',              badge: '⚛️' },
 };
 
 // =====================================================
@@ -1145,7 +1354,7 @@ function renderDrawer() {
     catTitle.textContent = meta.title;
     catSubtitle.textContent = meta.subtitle;
   }
-  const chemTypes = ['solid', 'liquid', 'gas'];
+  const chemTypes = ['solid', 'liquid', 'gas', 'elements'];
   if (chemTypes.includes(activeCategory)) drawerBody.dataset.chemType = activeCategory;
   else delete drawerBody.dataset.chemType;
   if (drawer) drawer.dataset.cat = activeCategory;
@@ -1472,14 +1681,14 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () 
 });
 
 // =====================================================
-// Main loop (drives reactions + cursor FX)
+// Main loop
 // =====================================================
 let lastLoopTime = performance.now();
 function mainLoop(now) {
   const dt = Math.min(0.05, (now - lastLoopTime) / 1000);
   lastLoopTime = now;
-  tickReactions(dt);
-  if (placedItems.some((it) => it.reaction)) render();
+  tickEffects(dt);
+  if (placedItems.some((it) => it.reaction || it.combination)) render();
   drawCursorFx();
   requestAnimationFrame(mainLoop);
 }
