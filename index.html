@@ -7,6 +7,78 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <!-- ===== Intro / Landing screen ===== -->
+  <div id="introScreen" class="intro-screen">
+    <div class="intro-bg">
+      <div class="intro-blob intro-blob--a"></div>
+      <div class="intro-blob intro-blob--b"></div>
+      <div class="intro-blob intro-blob--c"></div>
+      <div class="intro-grid"></div>
+    </div>
+
+    <div class="intro-content">
+      <div class="intro-brand">
+        <div class="intro-logo">⚗</div>
+        <div class="intro-brand-text">
+          <span class="intro-brand-title">Chemix Virtual Labs</span>
+          <span class="intro-brand-sub">Browser-based chemistry workspace</span>
+        </div>
+      </div>
+
+      <h1 class="intro-title">
+        Design, simulate &amp; teach
+        <span class="intro-gradient">chemistry experiments</span>
+      </h1>
+
+      <p class="intro-subtitle">
+        A virtual lab where you can drag apparatus onto the canvas, combine reagents,
+        and explore reactions — all without leaving your browser.
+      </p>
+
+      <div class="intro-actions">
+        <button id="introStart" class="intro-btn intro-btn--primary">
+          <span class="intro-btn-icon">▶</span>
+          Start new experiment
+        </button>
+        <button id="introContinue" class="intro-btn intro-btn--ghost" hidden>
+          Continue where you left off
+        </button>
+      </div>
+
+      <div class="intro-features">
+        <div class="intro-feature">
+          <span class="intro-feature-icon">🧪</span>
+          <div>
+            <strong>Drag &amp; drop</strong>
+            <span>Apparatus library with 200+ items</span>
+          </div>
+        </div>
+        <div class="intro-feature">
+          <span class="intro-feature-icon">⚗️</span>
+          <div>
+            <strong>Real chemistry</strong>
+            <span>Symbols, formulas &amp; concentrations</span>
+          </div>
+        </div>
+        <div class="intro-feature">
+          <span class="intro-feature-icon">💧</span>
+          <div>
+            <strong>Zoom &amp; pan</strong>
+            <span>Infinite canvas with grid snap</span>
+          </div>
+        </div>
+      </div>
+
+      <footer class="intro-footer">
+        <span>v0.1.0</span>
+        <span>·</span>
+        <span>MIT License</span>
+        <span>·</span>
+        <span>Made for learning</span>
+      </footer>
+    </div>
+  </div>
+
   <canvas id="cursorFx"></canvas>
   <canvas id="workspace"></canvas>
 
